@@ -14,19 +14,20 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - mongo
-  mongo:
-    # We setting up a Single Replica node, to allow transactions from Prisma
-    image: bitnami/mongodb:latest
+      - postgres
+  postgres:
+    image: postgres:16-alpine
     restart: unless-stopped
-    container_name: ${PROJECT_NAME}-mongo
-    # 2 way bind this port, so we can run npx prisma from host
+    container_name: ${PROJECT_NAME}-postgres
     ports:
-      - "${MONGODB_PORT_NUMBER}:${MONGODB_PORT_NUMBER}"
+      - "5432:5432"
     environment:
-      - MONGODB_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
-      - MONGODB_ROOT_USER=${MONGODB_ROOT_USER}
-      - MONGODB_REPLICA_SET_MODE=primary
-      - MONGODB_REPLICA_SET_KEY=${MONGODB_REPLICA_SET_KEY}
-      - MONGODB_PORT_NUMBER=${MONGODB_PORT_NUMBER}
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=fastify-rest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
 

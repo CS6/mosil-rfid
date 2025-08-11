@@ -7,12 +7,13 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Category {
-  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  id         String     @id @default(uuid())
   name       String
   createdAt  DateTime   @default(now())
   updatedAt  DateTime?  @updatedAt
@@ -20,7 +21,7 @@ model Category {
 }
 
 model Product {
-  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  id         String     @id @default(uuid())
   name       String
   price      Float
   published  Boolean    @default(false)
@@ -28,6 +29,6 @@ model Product {
   updatedAt  DateTime?  @updatedAt
 
   category   Category?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  categoryId String?     @db.ObjectId
+  categoryId String?
 }
 

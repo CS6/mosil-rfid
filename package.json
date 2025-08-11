@@ -9,7 +9,10 @@
     "debug": "nodemon --inspect=0.0.0.0:9229 src/index.ts",
     "docker:dev": "nodemon src/index.ts",
     "docker:prod": "pm2-runtime pm2.config.json",
-    "test": "jest test"
+    "test": "NODE_ENV=test jest",
+    "test:watch": "NODE_ENV=test jest --watch",
+    "test:coverage": "NODE_ENV=test jest --coverage",
+    "test:ci": "NODE_ENV=test jest --ci --coverage --maxWorkers=2"
   },
   "repository": {
     "type": "git",
@@ -45,11 +48,16 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
-    "@types/node": "^18.15.11",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^18.19.122",
+    "@types/supertest": "^6.0.3",
     "fastify-tsconfig": "^1.0.1",
+    "jest": "^30.0.5",
     "nodemon": "^2.0.22",
     "pino-pretty": "^10.0.0",
     "prisma": "^4.12.0",
+    "supertest": "^7.1.4",
+    "ts-jest": "^29.4.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.3"
   },

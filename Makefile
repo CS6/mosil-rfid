@@ -21,6 +21,10 @@ logs:
 mongo:
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml up mongo -d
 
+# Spins up PostgreSQL for local development
+postgres:
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml up postgres -d
+
 # Set default environment to "dev" if not specified
 ENV ?= dev
 
