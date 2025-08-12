@@ -20,3 +20,7 @@ export * from './user/get-users.use-case';
 export * from './user/get-user-by-uuid.use-case';
 export * from './user/update-user.use-case';
 export * from './user/delete-user.use-case';
+
+// Log use cases
+export * from './logs/query-logs.use-case';
+export * from './logs/get-log-summary.use-case';

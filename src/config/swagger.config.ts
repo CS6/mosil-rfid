@@ -28,6 +28,7 @@ export const swaggerConfig = {
     tags: [
       { name: 'Authentication', description: '認證相關 API' },
       { name: 'User Management', description: '使用者管理相關 API' },
+      { name: 'System Logs', description: '系統日誌相關 API' },
       { name: 'RFID', description: 'RFID 標籤管理相關 API' },
       { name: 'Box', description: '箱子管理相關 API' },
       { name: 'Shipment', description: '出貨單管理相關 API' }

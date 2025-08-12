@@ -4,6 +4,7 @@ import boxRoutes from './box.routes';
 import shipmentRoutes from './shipment.routes';
 import authRoutes from './auth.routes';
 import userRoutes from './user.routes';
+import logRoutes from './log.routes';
 
 export default async function apiRoutes(fastify: FastifyInstance) {
   // Register authentication routes
@@ -11,6 +12,9 @@ export default async function apiRoutes(fastify: FastifyInstance) {
   
   // Register user management routes
   fastify.register(userRoutes, { prefix: '/users' });
+  
+  // Register system logs routes
+  fastify.register(logRoutes, { prefix: '/logs' });
   
   // Register RFID system routes
   fastify.register(rfidRoutes);
