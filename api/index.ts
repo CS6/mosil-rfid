@@ -10,12 +10,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       await app.ready();
     }
 
+    // Prepare headers without content-length to avoid conflicts
+    const cleanHeaders = { ...req.headers };
+    delete cleanHeaders['content-length'];
+    delete cleanHeaders['transfer-encoding'];
+    
     // Forward the request to Fastify
     await app.inject({
       method: req.method,
-      url: req.url,
-      headers: req.headers,
-      payload: req.body
+      url: req.url || '/',
+      headers: cleanHeaders,
+      payload: req.method !== 'GET' && req.method !== 'HEAD' ? req.body : undefined
     }).then((response: any) => {
       res.status(response.statusCode);
       
