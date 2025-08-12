@@ -91,3 +91,305 @@ S001202508101545
 ├┬─┤├─────┬─────┤
 S 編號3碼 時間戳記12碼
 
+
+#  APIs
+
+
+API 端點定義
+5.1 認證相關 APIs
+5.1.1 使用者登入
+
+端點：POST /api/v1/auth/login
+權限：公開
+功能：驗證帳號密碼，取得 JWT Token
+
+請求內容
+json{
+    "account": "user@calerdo.com",
+    "password": "password123"
+}
+成功回應 (200 OK)
+json{
+    "message": "success",
+    "data": {
+        "uuid": "550e8400-e29b-41d4-a716-446655440000",
+        "code": "001",
+        "account": "user@calerdo.com",
+        "name": "總公司",
+        "userType": "admin",
+        "accessToken": "eyJhbGciOiJIUzI1NiIs..."
+    }
+}
+5.1.2 Token 更新
+
+端點：POST /api/v1/auth/refresh
+權限：需認證
+功能：更新即將過期的 Token
+
+
+5.2 使用者管理 APIs
+5.2.1 建立使用者
+
+端點：POST /api/v1/users
+權限：admin, user
+功能：新增系統使用者
+
+請求內容
+json{
+    "account": "newuser@calerdo.com",
+    "password": "securePass123",
+    "code": "002",
+    "name": "新竹分公司",
+    "userType": "user"
+}
+成功回應 (201 Created)
+json{
+    "message": "success",
+    "data": {
+        "uuid": "550e8400-e29b-41d4-a716-446655440001",
+        "code": "002",
+        "account": "newuser@calerdo.com",
+        "name": "新竹分公司",
+        "userType": "user"
+    }
+}
+5.2.2 查詢使用者清單
+
+端點：GET /api/v1/users
+權限：admin, user
+查詢參數：page, limit, userType, code
+
+5.2.3 查詢單一使用者
+
+端點：GET /api/v1/users/{uuid}
+權限：
+
+admin, user: 可查詢任何使用者
+supplier: 僅能查詢自己
+
+
+
+5.2.4 更新使用者資料
+
+端點：PATCH /api/v1/users/{uuid}
+權限：admin, user
+
+5.2.5 刪除使用者
+
+端點：DELETE /api/v1/users/{uuid}
+權限：admin
+
+
+5.3 RFID 標籤管理 APIs
+5.3.1 產生商品標籤
+
+端點：POST /api/v1/rfids/products
+權限：admin, user
+功能：批次產生商品 RFID 標籤
+
+請求內容
+json{
+    "sku": "A252600201234",
+    "quantity": 100
+}
+成功回應 (201 Created)
+json{
+    "message": "success",
+    "data": {
+        "sku": "A252600201234",
+        "generatedCount": 100,
+        "startSerial": "0001",
+        "endSerial": "0100",
+        "rfids": [
+            "A2526002012340001",
+            "A2526002012340002",
+            "..."
+        ]
+    }
+}
+5.3.2 查詢商品標籤
+
+端點：GET /api/v1/rfids/products
+權限：admin, user, supplier
+查詢參數：
+
+sku: 商品代碼
+status: 狀態 (available/bound/shipped)
+boxno: 外箱編號
+page, limit
+
+
+
+
+5.4 外箱管理 APIs
+5.4.1 產生外箱標籤
+
+端點：POST /api/v1/boxes
+權限：admin, user
+功能：批次產生外箱編號
+
+請求內容
+json{
+    "code": "001",
+    "quantity": 10
+}
+成功回應 (201 Created)
+json{
+    "message": "success",
+    "data": {
+        "code": "001",
+        "year": "2025",
+        "generatedCount": 10,
+        "boxnos": [
+            "B001202500001",
+            "B001202500002",
+            "..."
+        ]
+    }
+}
+5.4.2 綁定商品至外箱
+
+端點：POST /api/v1/boxes/{boxno}/binding
+權限：admin, user
+功能：將商品標籤綁定至外箱
+
+請求內容
+json{
+    "rfids": [
+        "A2526002012340001",
+        "A2526002012340002",
+        "A2526002012340003"
+    ]
+}
+成功回應 (200 OK)
+json{
+    "message": "success",
+    "data": {
+        "boxno": "B001202500001",
+        "successCount": 2,
+        "failedCount": 1,
+        "success": [
+            "A2526002012340001",
+            "A2526002012340002"
+        ],
+        "failed": [
+            {
+                "rfid": "A2526002012340003",
+                "reason": "ALREADY_BOUND",
+                "boundTo": "B001202500002"
+            }
+        ]
+    }
+}
+5.4.3 移除外箱內商品
+
+端點：DELETE /api/v1/boxes/{boxno}/binding
+權限：admin, user
+
+請求內容
+json{
+    "rfids": ["A2526002012340001"]
+}
+5.4.4 查詢外箱詳情
+
+端點：GET /api/v1/boxes/{boxno}
+權限：admin, user, supplier
+
+成功回應 (200 OK)
+json{
+    "message": "success",
+    "data": {
+        "boxno": "B001202500001",
+        "code": "001",
+        "status": "PACKED",
+        "rfidCount": 150,
+        "createdAt": "2025-08-10T10:00:00Z",
+        "rfids": ["..."],
+        "shipmentNo": null
+    }
+}
+5.4.5 查詢未出貨外箱
+
+端點：GET /api/v1/boxes?status=unshipped
+權限：admin, user
+功能：取得所有未出貨的外箱清單
+
+
+5.5 出貨管理 APIs
+5.5.1 建立出貨單
+
+端點：POST /api/v1/shipments
+權限：admin, user
+功能：建立出貨單並關聯外箱
+
+請求內容
+json{
+    "boxnos": [
+        "B001202500001",
+        "B001202500002"
+    ],
+    "note": "出貨備註"
+}
+成功回應 (201 Created)
+json{
+    "message": "success",
+    "data": {
+        "shipmentNo": "S001202508101545",
+        "boxCount": 2,
+        "totalRfids": 300,
+        "status": "CREATED",
+        "createdAt": "2025-08-10T15:45:00Z"
+    }
+}
+5.5.2 查詢出貨單
+
+端點：GET /api/v1/shipments/{shipmentNo}
+權限：admin, user, supplier
+
+5.5.3 查詢出貨單清單
+
+端點：GET /api/v1/shipments
+權限：admin, user
+查詢參數：
+
+status: 狀態
+startDate: 開始日期
+endDate: 結束日期
+page, limit
+
+
+
+
+5.6 系統日誌 APIs
+5.6.1 查詢操作日誌
+
+端點：GET /api/v1/logs
+權限：admin
+功能：查詢系統操作記錄
+查詢參數：
+
+userId: 使用者 ID
+action: 操作類型
+startDate: 開始時間
+endDate: 結束時間
+page, limit
+
+
+
+成功回應 (200 OK)
+json{
+    "message": "success",
+    "data": [
+        {
+            "id": "log-001",
+            "userId": "550e8400-e29b-41d4-a716-446655440000",
+            "userName": "總公司",
+            "action": "CREATE_BOX",
+            "details": "建立外箱 B001202500001",
+            "ipAddress": "192.168.1.100",
+            "userAgent": "Mozilla/5.0...",
+            "timestamp": "2025-08-10T10:00:00Z"
+        }
+    ],
+    "pagination": {...}
+}
