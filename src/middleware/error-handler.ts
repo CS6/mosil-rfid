@@ -36,12 +36,15 @@ export function setupErrorHandler(app: FastifyInstance): void {
 
     // Handle business logic errors (thrown by use cases)
     if (statusCode >= 400 && statusCode < 500) {
+      const errorCode = getErrorCode(error.message);
+      const httpStatus = getHttpStatusCode(errorCode);
+      
       const errorResponse: ApiErrorResponse = {
         message: error.message,
-        errorCode: getErrorCode(error.message)
+        errorCode: errorCode
       };
       
-      reply.status(statusCode).send(errorResponse);
+      reply.status(httpStatus).send(errorResponse);
       return;
     }
 
@@ -60,18 +63,35 @@ export function setupErrorHandler(app: FastifyInstance): void {
 }
 
 function getErrorCode(message: string): string {
+  // 根據 HTTP 狀態碼規範的錯誤碼對應
   const errorMap: Record<string, string> = {
-    'User not found': 'USER_NOT_FOUND',
-    'User is not active': 'USER_INACTIVE',
-    'RFID .* already exists': 'RFID_ALREADY_EXISTS',
-    'Serial number .* already exists': 'SERIAL_NUMBER_EXISTS',
-    'ProductNo .* does not match SKU prefix': 'PRODUCT_NO_MISMATCH',
-    'Box .* not found': 'BOX_NOT_FOUND',
-    'RFID .* not found': 'RFID_NOT_FOUND',
-    'RFID .* already assigned to box': 'RFID_ALREADY_IN_BOX',
-    'Invalid start serial number': 'INVALID_SERIAL_NUMBER',
-    'Quantity must be between 1 and 1000': 'INVALID_QUANTITY',
-    'Serial number exceeds 9999': 'SERIAL_NUMBER_OVERFLOW'
+    // 400 - 請求錯誤 (invalid_request)
+    'Invalid start serial number': 'invalid_request',
+    'Quantity must be between 1 and 1000': 'invalid_request',
+    'Serial number exceeds 9999': 'invalid_request',
+    'ProductNo .* does not match SKU prefix': 'invalid_request',
+    
+    // 401 - 未認證 (unauthorized)
+    'Token expired': 'unauthorized',
+    'Invalid token': 'unauthorized',
+    'Authentication required': 'unauthorized',
+    
+    // 403 - 無權限 (forbidden)
+    'User is not active': 'forbidden',
+    'Insufficient permissions': 'forbidden',
+    'Access denied': 'forbidden',
+    
+    // 404 - 找不到資源 (not_found)
+    'User not found': 'not_found',
+    'Box .* not found': 'not_found',
+    'RFID .* not found': 'not_found',
+    'Shipment not found': 'not_found',
+    
+    // 409 - 衝突 (conflict)
+    'RFID .* already exists': 'conflict',
+    'Serial number .* already exists': 'conflict',
+    'RFID .* already assigned to box': 'conflict',
+    'Box already shipped': 'conflict'
   };
 
   for (const [pattern, code] of Object.entries(errorMap)) {
@@ -80,5 +100,19 @@ function getErrorCode(message: string): string {
     }
   }
 
-  return 'BUSINESS_LOGIC_ERROR';
+  return 'invalid_request'; // 預設為請求錯誤
+}
+
+function getHttpStatusCode(errorCode: string): number {
+  // 根據 HTTP 狀態碼規範對應
+  const statusMap: Record<string, number> = {
+    'invalid_request': 400,    // 請求錯誤
+    'unauthorized': 401,       // 未認證
+    'forbidden': 403,          // 無權限
+    'not_found': 404,          // 找不到資源
+    'conflict': 409,           // 衝突
+    'internal_error': 500      // 伺服器錯誤
+  };
+
+  return statusMap[errorCode] || 400; // 預設為 400
 }

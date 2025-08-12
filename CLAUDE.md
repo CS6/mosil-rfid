@@ -1,5 +1,19 @@
 加連登 RFID 應用程式 API 規劃書 v2.0
 
+## 3.4 HTTP 狀態碼
+
+| 狀態碼 | 說明       | 使用時機 | message          |
+|--------|------------|----------|------------------|
+| 200    | 成功       | `GET`、`PUT`、`PATCH` 成功 | success          |
+| 201    | 建立成功   | `POST` 新增資源成功       | success          |
+| 204    | 無內容     | `DELETE` 成功或無需回傳資料 | success / null   |
+| 400    | 請求錯誤   | 參數驗證失敗              | invalid_request  |
+| 401    | 未認證     | Token 無效或過期          | unauthorized     |
+| 403    | 無權限     | 權限不足                  | forbidden        |
+| 404    | 找不到資源 | 資源不存在                | not_found        |
+| 409    | 衝突       | 業務邏輯衝突              | conflict         |
+| 500    | 伺服器錯誤 | 系統內部錯誤              | internal_error   |
+
 一率請使用者行啟動開發環境
 
 一、專案概述

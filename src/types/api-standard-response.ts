@@ -28,53 +28,35 @@ export interface StandardPaginatedResponse<T = any> {
   pagination: PaginationInfo;
 }
 
-// 常見錯誤碼定義
+// 標準化錯誤碼定義 (符合 HTTP 狀態碼規範)
 export const ErrorCodes = {
-  // 認證錯誤
-  AUTH_INVALID_CREDENTIALS: 'AUTH_INVALID_CREDENTIALS',
-  AUTH_TOKEN_EXPIRED: 'AUTH_TOKEN_EXPIRED',
-  AUTH_TOKEN_INVALID: 'AUTH_TOKEN_INVALID',
-  AUTH_PERMISSION_DENIED: 'AUTH_PERMISSION_DENIED',
+  // 400 - 請求錯誤
+  INVALID_REQUEST: 'invalid_request',
   
-  // 使用者相關
-  USER_ALREADY_EXISTS: 'USER_ALREADY_EXISTS',
-  USER_NOT_FOUND: 'USER_NOT_FOUND',
+  // 401 - 未認證  
+  UNAUTHORIZED: 'unauthorized',
   
-  // RFID 相關
-  RFID_ALREADY_EXISTS: 'RFID_ALREADY_EXISTS',
-  RFID_NOT_FOUND: 'RFID_NOT_FOUND',
-  RFID_ALREADY_BOUND: 'RFID_ALREADY_BOUND',
+  // 403 - 無權限
+  FORBIDDEN: 'forbidden',
   
-  // 外箱相關
-  BOX_NOT_FOUND: 'BOX_NOT_FOUND',
-  BOX_ALREADY_SHIPPED: 'BOX_ALREADY_SHIPPED',
-  BOX_IS_EMPTY: 'BOX_IS_EMPTY',
+  // 404 - 找不到資源
+  NOT_FOUND: 'not_found',
   
-  // 出貨單相關
-  SHIPMENT_NOT_FOUND: 'SHIPMENT_NOT_FOUND',
+  // 409 - 衝突
+  CONFLICT: 'conflict',
   
-  // 通用錯誤
-  INVALID_PARAMETER: 'INVALID_PARAMETER',
-  SYSTEM_ERROR: 'SYSTEM_ERROR'
+  // 500 - 伺服器錯誤
+  INTERNAL_ERROR: 'internal_error'
 } as const;
 
 // HTTP 狀態碼對應表
 export const ErrorCodeHttpStatus: Record<string, number> = {
-  [ErrorCodes.AUTH_INVALID_CREDENTIALS]: 401,
-  [ErrorCodes.AUTH_TOKEN_EXPIRED]: 401,
-  [ErrorCodes.AUTH_TOKEN_INVALID]: 401,
-  [ErrorCodes.AUTH_PERMISSION_DENIED]: 403,
-  [ErrorCodes.USER_ALREADY_EXISTS]: 409,
-  [ErrorCodes.USER_NOT_FOUND]: 404,
-  [ErrorCodes.RFID_ALREADY_EXISTS]: 409,
-  [ErrorCodes.RFID_NOT_FOUND]: 404,
-  [ErrorCodes.RFID_ALREADY_BOUND]: 409,
-  [ErrorCodes.BOX_NOT_FOUND]: 404,
-  [ErrorCodes.BOX_ALREADY_SHIPPED]: 409,
-  [ErrorCodes.BOX_IS_EMPTY]: 400,
-  [ErrorCodes.SHIPMENT_NOT_FOUND]: 404,
-  [ErrorCodes.INVALID_PARAMETER]: 400,
-  [ErrorCodes.SYSTEM_ERROR]: 500
+  [ErrorCodes.INVALID_REQUEST]: 400,   // 請求錯誤
+  [ErrorCodes.UNAUTHORIZED]: 401,      // 未認證
+  [ErrorCodes.FORBIDDEN]: 403,         // 無權限
+  [ErrorCodes.NOT_FOUND]: 404,         // 找不到資源
+  [ErrorCodes.CONFLICT]: 409,          // 衝突
+  [ErrorCodes.INTERNAL_ERROR]: 500     // 伺服器錯誤
 };
 
 // 輔助函數：創建成功回應
