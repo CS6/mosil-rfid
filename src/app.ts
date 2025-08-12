@@ -44,6 +44,12 @@ const main = async () => {
     await app.register(fastifySwagger, swaggerConfig);
     await app.register(fastifySwaggerUi, {
       routePrefix: '/docs',
+      staticCSP: true,
+      transformStaticCSP: (header) => header,
+      uiConfig: {
+        docExpansion: 'list',
+        deepLinking: false
+      }
     });
   }
 
