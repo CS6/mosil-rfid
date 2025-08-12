@@ -48,13 +48,13 @@ export class CreateBatchBoxesUseCase {
     );
 
     const currentYear = new Date().getFullYear().toString();
-    const boxnos = boxes.map(box => box.getBoxNo().getValue());
+    const boxNos = boxes.map(box => box.getBoxNo().getValue());
 
     return {
       code: request.code,
       year: currentYear,
       generatedCount: boxes.length,
-      boxnos
+      boxNos
     };
   }
 }

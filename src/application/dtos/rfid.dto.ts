@@ -30,7 +30,7 @@ export interface GenerateProductRfidsResponse {
 export interface QueryProductRfidsRequest {
   sku?: string;
   status?: 'available' | 'bound' | 'shipped';
-  boxno?: string;
+  boxNo?: string;
   page?: number;
   limit?: number;
 }

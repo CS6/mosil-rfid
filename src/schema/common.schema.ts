@@ -31,6 +31,41 @@ export const messageSchema = {
   },
 };
 
+// Standard error response for API endpoints
+export const errorResponseSchema = {
+  $id: 'errorResponseSchema',
+  type: 'object',
+  properties: {
+    message: { type: 'string' },
+    errorCode: { type: 'string' },
+    details: { type: 'object', nullable: true }
+  },
+  required: ['message', 'errorCode']
+};
+
+// Standard authentication error responses
+export const unauthorizedResponseSchema = {
+  $id: 'unauthorizedResponseSchema',
+  type: 'object',
+  properties: {
+    message: { type: 'string', examples: ['Unauthorized', 'Token expired', 'Invalid token'] },
+    errorCode: { type: 'string', examples: ['UNAUTHORIZED', 'TOKEN_EXPIRED', 'INVALID_TOKEN'] },
+    details: { type: 'object', nullable: true }
+  },
+  required: ['message', 'errorCode']
+};
+
+export const forbiddenResponseSchema = {
+  $id: 'forbiddenResponseSchema',
+  type: 'object',
+  properties: {
+    message: { type: 'string', examples: ['Forbidden', 'Insufficient permissions', 'Access denied'] },
+    errorCode: { type: 'string', examples: ['FORBIDDEN', 'INSUFFICIENT_PERMISSIONS', 'ACCESS_DENIED'] },
+    details: { type: 'object', nullable: true }
+  },
+  required: ['message', 'errorCode']
+};
+
 // Used to validate/match URLS that include an ':id' param
 export const paramIdSchema = {
   $id: 'paramIdSchema',

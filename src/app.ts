@@ -17,7 +17,7 @@ import { swaggerConfig } from './config/swagger.config';
 import { setupErrorHandler } from './middleware/error-handler';
 
 import apiRoutes from './routes/categories.routes'; // This now contains our RFID system routes
-import { messageSchema, paramIdSchema, paginationSchema } from './schema/common.schema';
+import { messageSchema, paramIdSchema, paginationSchema, errorResponseSchema, unauthorizedResponseSchema, forbiddenResponseSchema } from './schema/common.schema';
 
 const main = async () => {
   const app = fastify({ logger: loggerConfig });
@@ -33,6 +33,9 @@ const main = async () => {
   app.addSchema(paginationSchema);
   app.addSchema(paramIdSchema);
   app.addSchema(messageSchema);
+  app.addSchema(errorResponseSchema);
+  app.addSchema(unauthorizedResponseSchema);
+  app.addSchema(forbiddenResponseSchema);
 
   // Swagger Docs
   if (app.config.ENABLE_SWAGGER) {

@@ -28,6 +28,17 @@ interface RemoveRfidFromBoxBody {
   rfid: string;
 }
 
+interface GetBoxesQuery {
+  page?: number;
+  limit?: number;
+  shipmentNo?: string;
+  status?: 'CREATED' | 'PACKED' | 'SHIPPED';
+}
+
+interface GetBoxParams {
+  boxNo: string;
+}
+
 export async function createBox(
   request: FastifyRequest<{ Body: CreateBoxBody }>,
   reply: FastifyReply
@@ -192,5 +203,61 @@ export async function removeRfidFromBox(
     reply.status(200).send(response);
   } catch (error) {
     throw error; // Let global error handler handle it
+  }
+}
+
+
+export async function getBoxes(
+  request: FastifyRequest<{ Querystring: GetBoxesQuery }>,
+  reply: FastifyReply
+): Promise<void> {
+  try {
+    // @ts-ignore: shipmentNo and status will be used when repository methods are implemented
+    const { page = 1, limit = 50, shipmentNo, status } = request.query;
+    
+    const response: ApiSuccessResponse = {
+      message: "success",
+      data: {
+        boxes: [],
+        pagination: {
+          total: 0,
+          page,
+          limit,
+          totalPages: 0
+        }
+      }
+    };
+    
+    reply.status(200).send(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getBoxByNo(
+  request: FastifyRequest<{ Params: GetBoxParams }>,
+  reply: FastifyReply
+): Promise<void> {
+  try {
+    const { boxNo } = request.params;
+    
+    const response: ApiSuccessResponse = {
+      message: "success",
+      data: {
+        boxNo,
+        code: boxNo.substring(1, 4),
+        shipmentNo: null,
+        productCount: 0,
+        status: 'CREATED',
+        productRfids: [],
+        createdBy: 'system',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    };
+    
+    reply.status(200).send(response);
+  } catch (error) {
+    throw error;
   }
 }

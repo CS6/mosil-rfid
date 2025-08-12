@@ -29,7 +29,7 @@ interface GenerateProductRfidsBody {
 interface QueryProductRfidsQuery {
   sku?: string;
   status?: 'available' | 'bound' | 'shipped';
-  boxno?: string;
+  boxNo?: string;
   page?: number;
   limit?: number;
 }

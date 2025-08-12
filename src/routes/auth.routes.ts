@@ -8,6 +8,7 @@ async function authRoutes(fastify: FastifyInstance) {
       summary: '使用者登入',
       description: '驗證帳號密碼，取得 JWT Token',
       tags: ['Authentication'],
+      security: [],
       body: {
         type: 'object',
         required: ['account', 'password'],

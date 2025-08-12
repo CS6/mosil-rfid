@@ -29,7 +29,7 @@ async function shipmentRoutes(fastify: FastifyInstance) {
         201: {
           type: 'object',
           properties: {
-            success: { type: 'boolean' },
+            message: { type: 'string' },
             data: {
               type: 'object',
               properties: {

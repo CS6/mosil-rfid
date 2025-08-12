@@ -11,7 +11,7 @@ export interface BatchBoxResponse {
   code: string;
   year: string;
   generatedCount: number;
-  boxnos: string[];
+  boxNos: string[];
 }
 
 export interface AddRfidToBoxRequest {

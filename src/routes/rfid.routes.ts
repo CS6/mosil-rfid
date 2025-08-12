@@ -58,12 +58,13 @@ async function rfidRoutes(fastify: FastifyInstance) {
           }
         },
         400: {
-          type: 'object',
-          properties: {
-            message: { type: 'string' },
-            errorCode: { type: 'string' },
-            details: { type: 'object', nullable: true }
-          }
+          $ref: 'errorResponseSchema#'
+        },
+        401: {
+          $ref: 'unauthorizedResponseSchema#'
+        },
+        403: {
+          $ref: 'forbiddenResponseSchema#'
         }
       }
     }
@@ -138,12 +139,13 @@ async function rfidRoutes(fastify: FastifyInstance) {
           }
         },
         400: {
-          type: 'object',
-          properties: {
-            message: { type: 'string' },
-            errorCode: { type: 'string' },
-            details: { type: 'object', nullable: true }
-          }
+          $ref: 'errorResponseSchema#'
+        },
+        401: {
+          $ref: 'unauthorizedResponseSchema#'
+        },
+        403: {
+          $ref: 'forbiddenResponseSchema#'
         }
       }
     }
@@ -217,12 +219,13 @@ async function rfidRoutes(fastify: FastifyInstance) {
           }
         },
         400: {
-          type: 'object',
-          properties: {
-            message: { type: 'string' },
-            errorCode: { type: 'string' },
-            details: { type: 'object', nullable: true }
-          }
+          $ref: 'errorResponseSchema#'
+        },
+        401: {
+          $ref: 'unauthorizedResponseSchema#'
+        },
+        403: {
+          $ref: 'forbiddenResponseSchema#'
         }
       }
     }
@@ -246,7 +249,7 @@ async function rfidRoutes(fastify: FastifyInstance) {
             enum: ['available', 'bound', 'shipped'],
             description: '狀態篩選'
           },
-          boxno: { 
+          boxNo: { 
             type: 'string',
             description: '外箱編號篩選'
           },
