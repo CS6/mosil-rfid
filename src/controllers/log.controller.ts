@@ -1,5 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { QueryLogsUseCase, GetLogSummaryUseCase } from '../application';
+import { QueryLogsUseCase } from '../application/use-cases/logs/query-logs.use-case';
+import { GetLogSummaryUseCase } from '../application/use-cases/logs/get-log-summary.use-case';
 import { PrismaSystemLogRepository } from '../infrastructure';
 import { ApiSuccessResponse } from '../types/api-response';
 
