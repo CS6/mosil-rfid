@@ -1,176 +1,300 @@
-# 🚀 RESTfull APIs boilerplate using Fastify
+# MOSIL RFID 系統使用手冊
 
-Fastify provides high-performance web framework capabilities and is well-suited for building scalable APIs. It's lightweight and designed to handle a high volume of requests.
+## 🌐 線上服務
 
-TypeScript provides one of the best developer experiences in `${currentyear}`, developers can catch errors during compilation rather than runtime, making it easier to catch issues early on in the development process. Additionally, It's strict typing system allows for easier maintenance of the codebase, making it easier to read and refactor code.
+**主要服務網址：** https://mosil-rfid.vercel.app/
 
-## Key Components
-[Tyepscript](https://www.typescriptlang.org/) - [Fastify](https://github.com/fastify/fastify/) - [PrismaJS](https://github.com/prisma/prisma) - [Docker](https:///www.docker.com/) - [Swagger](https://swagger.io/) - [MongoDB](https://www.mongodb.com/) - [PM2](https://pm2.keymetrics.io/) - [FakerJS](https://github.com/faker-js/faker)
+**API 文件（Swagger UI）：** https://mosil-rfid.vercel.app/docs
 
-## Fastify plugins included
-[@fastify/compress](https://github.com/fastify/fastify-compress) - [@fastify/cors](https://github.com/fastify/fastify-cors) - [@fastify/env](https://github.com/fastify/fastify-env) - [@fastify/helmet](https://github.com/fastify/fastify-helmet) - [@fastify/swagger](https://github.com/fastify/fastify-swagger) - [@fastify/swagger-ui](https://github.com/fastify/fastify-swagger-ui)
+## 📋 系統概述
 
-## Table of contents
-- [Setup & Configuration](#setup--configuration)
-- [Running locally](#running-locally)
-- [Databases & MongoDB for development](#databases--mongodb-for-development)
-- [File Structure](#file-structure)
-- [Running as a Docker container](#running-as-a-docker-container)
-- [Building for production](#building-for-production)
-- [Debugging](#debugging)
-- [Hot-Reloading](#hot-reloading)
+MOSIL RFID 系統是一個基於 Domain-Driven Design (DDD) 架構的 RFID 標籤管理系統，提供商品標籤生成、箱號管理、出貨追蹤等功能。
 
----
+### 核心概念
 
-## Setup & Configuration
-Clone the repository:
+- **RFID 標籤 (17碼)**: SKU(13碼) + 序號(4碼)
+  - SKU = 貨號(8碼) + 顏色(3碼) + 尺寸(2碼) 
+- **箱號 (13碼)**: B + 編號(3碼) + 年份(4碼) + 流水號(5碼)
+- **使用者認證**: JWT Token 驗證
+- **系統日誌**: 完整操作追蹤記錄
+
+## 🚀 快速開始
+
+### 1. 訪問 API 文件
+
+前往 **[https://mosil-rfid.vercel.app/docs](https://mosil-rfid.vercel.app/docs)** 查看完整的 API 文件。
+
+Swagger UI 提供：
+- 📖 完整的 API 端點說明
+- 🧪 線上 API 測試工具
+- 📄 請求/回應格式範例
+- 🔐 認證方式說明
+
+### 2. 健康檢查
+
+測試系統是否正常運行：
 ```bash
-git clone https://github.com/danielm/fastify-prisma-swagger-rest-boilerplate.git
+curl https://mosil-rfid.vercel.app/api/v1/health
 ```
-Create a `.env` file from `.env.example` and tweak it as necessary.
-> Some options need some tweaking if running locally or using docker. Read more bellow 👇
 
----
-
-## Running locally
-Make sure your `.env` file has the right settings, these in particular:
-```env
-# ...
-BIND_PORT=5000
-BIND_ADDR=127.0.0.1
-DATABASE_URL=mongodb://USERNAME:PASSWORD@HOST:PORT/DATABASE
-# ...
+預期回應：
+```json
+{
+  "status": "ok",
+  "timestamp": "2025-08-12T20:11:41.591Z"
+}
 ```
-> [Check this section](#databases--mongodb) bellow to quickly spin up locally a MongoDB instance for development
 
-Now, make sure you have installed [Node.js](http://www.nodejs.org) in any recent/lts version.
+## 🔐 認證系統
+
+### 登入
+
+**POST** `/api/v1/auth/login`
 
 ```bash
-# Install all Dev-included dependencies
+curl -X POST "https://mosil-rfid.vercel.app/api/v1/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "your_username",
+    "password": "your_password"
+  }'
+```
+
+成功回應：
+```json
+{
+  "message": "success",
+  "data": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "expiresIn": 3600,
+    "user": {
+      "uuid": "123e4567-e89b-12d3-a456-426614174000",
+      "username": "your_username",
+      "role": "USER"
+    }
+  }
+}
+```
+
+### Token 刷新
+
+**POST** `/api/v1/auth/refresh`
+
+```bash
+curl -X POST "https://mosil-rfid.vercel.app/api/v1/auth/refresh" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "refreshToken": "your_refresh_token"
+  }'
+```
+
+## 📦 主要功能
+
+### 1. RFID 標籤管理
+
+#### 生成單一 RFID 標籤
+**POST** `/api/v1/rfid`
+
+```bash
+curl -X POST "https://mosil-rfid.vercel.app/api/v1/rfid" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sku": "MNNR7TSL153M",
+    "productNo": "MNNR7TSL", 
+    "serialNo": "0001",
+    "createdBy": "user123"
+  }'
+```
+
+#### 批量生成 RFID 標籤
+**POST** `/api/v1/rfid/batch`
+
+```bash
+curl -X POST "https://mosil-rfid.vercel.app/api/v1/rfid/batch" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sku": "MNNR7TSL153M",
+    "productNo": "MNNR7TSL",
+    "quantity": 100,
+    "createdBy": "user123"
+  }'
+```
+
+#### 查詢商品標籤 (規範 5.3.2)
+**GET** `/api/v1/rfids/products`
+
+```bash
+curl -X GET "https://mosil-rfid.vercel.app/api/v1/rfids/products?sku=MNNR7TSL153M&page=1&limit=20" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+### 2. 箱號管理
+
+#### 生成單一箱號
+**POST** `/api/v1/box`
+
+```bash
+curl -X POST "https://mosil-rfid.vercel.app/api/v1/box" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "code": "153",
+    "createdBy": "user123"
+  }'
+```
+
+#### 批量生成箱號
+**POST** `/api/v1/box/batch`
+
+```bash
+curl -X POST "https://mosil-rfid.vercel.app/api/v1/box/batch" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "code": "153",
+    "quantity": 50,
+    "createdBy": "user123"
+  }'
+```
+
+#### 將 RFID 加入箱子
+**POST** `/api/v1/box/{boxId}/rfid`
+
+```bash
+curl -X POST "https://mosil-rfid.vercel.app/api/v1/box/123/rfid" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "rfidTag": "MNNR7TSL153M0001"
+  }'
+```
+
+#### 將 RFID 移出箱子
+**DELETE** `/api/v1/box/{boxId}/rfid/{rfidTag}`
+
+```bash
+curl -X DELETE "https://mosil-rfid.vercel.app/api/v1/box/123/rfid/MNNR7TSL153M0001" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+### 3. 出貨單管理
+
+#### 創建出貨單
+**POST** `/api/v1/shipment`
+
+```bash
+curl -X POST "https://mosil-rfid.vercel.app/api/v1/shipment" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "shipmentNumber": "SHIP001",
+    "destination": "台北倉庫",
+    "createdBy": "user123"
+  }'
+```
+
+### 4. 系統日誌
+
+#### 查詢操作日誌
+**GET** `/api/v1/logs`
+
+```bash
+curl -X GET "https://mosil-rfid.vercel.app/api/v1/logs?action=CREATE_RFID&page=1&limit=50" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+#### 獲取日誌摘要
+**GET** `/api/v1/logs/summary`
+
+```bash
+curl -X GET "https://mosil-rfid.vercel.app/api/v1/logs/summary" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+## 📊 API 回應格式
+
+### 成功回應
+```json
+{
+  "message": "success",
+  "data": {
+    // 回應資料
+  }
+}
+```
+
+### 錯誤回應
+```json
+{
+  "message": "錯誤描述",
+  "errorCode": "ERROR_CODE",
+  "details": {
+    // 錯誤詳細資訊
+  }
+}
+```
+
+## 🛠️ 開發環境設定
+
+### 本地安裝
+
+```bash
+# 複製專案
+git clone https://github.com/CS6/mosil-rfid.git
+cd mosil-rfid
+
+# 安裝依賴
 npm install
-# Generates Prisma cliente metadata/types stuff
+
+# 設定環境變數
+cp .env.example .env
+# 編輯 .env 文件，設定 DATABASE_URL 等必要參數
+
+# 生成 Prisma Client
 npx prisma generate
-```
 
-Running the project is simple as:
+# 執行資料庫遷移
+npx prisma db push
 
-```bash
+# 啟動開發伺服器
 npm run start
 ```
 
-Now you should be able access the project:
-- APIs: http://127.0.0.1:5000/api/v1/*
-- SwaggerUI documentation: http://127.0.0.1:5000/docs/
+### 本地訪問
 
-> **Note:** Inside the `docs/` you can [download a Postman collection](https://github.com/danielm/fastify-prisma-swagger-rest-boilerplate/blob/main/docs/Postman.collection.json) to import and play with the example APIs
+- **API 服務：** http://localhost:3001
+- **API 文件：** http://localhost:3001/docs
+- **健康檢查：** http://localhost:3001/api/v1/health
 
-### Other useful commands
-```bash
-# Very nice UI for data visualization of our database
-npx prisma studio
-# Synchronize your Prisma schema with your database
-npx prisma db push
-```
+## 🔧 故障排除
 
-### Seed the local Database
-```bash
-# Seed our database with a bunch of random data
-npx prisma db seed
-```
+### 常見問題
 
----
+1. **認證失敗**
+   - 檢查 Token 是否過期
+   - 確認 Authorization Header 格式正確
 
-## Databases & MongoDB for development
-Since the project is using by default MongoDB, and It can be a little tricky to setup a replica set for just development:
+2. **API 回應 404**
+   - 確認 URL 路徑正確
+   - 檢查 API 版本號 (`/api/v1/`)
 
-> [Read more about Prisma and MongoDB](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/mongodb-typescript-mongodb)
+3. **RFID 格式錯誤**
+   - 確認 SKU 為 13 碼
+   - 確認序號為 4 碼數字
 
-I've included in this project a quick way to spin up a single replica node, just by running:
-```bash
-make mongo
-```
+4. **箱號格式錯誤**
+   - 確認編號為 3 碼
+   - 系統會自動生成年份和流水號
 
-This will bring up a MongoDB instance using Docker. See `.env.example` for customizing some options.
+## 📞 技術支援
+
+- **API 文件：** https://mosil-rfid.vercel.app/docs
+- **健康檢查：** https://mosil-rfid.vercel.app/api/v1/health
+- **專案倉庫：** https://github.com/CS6/mosil-rfid
 
 ---
 
-## File Structure
-```
-├── prisma
-│   ├── schema.prisma  // Prisma JS DB models/schemas
-│   └── seed.ts        // Random data generator using FakerJS
-└── src
-    ├── app.ts
-    ├── config         // Lots of config for fastify and plugins
-    ├── controllers
-    ├── index.ts       // Main entrypoints
-    ├── lib            // Helper functions
-    ├── plugins        // Custom plugins
-    ├── routes
-    └── types          // Typescript types and extensions
-```
-
-### The example project
-The boilerplate includes an example of the following schema:
-```
-   +-------------+         +--------------+
-   |   Category  |    1    |    Product   |
-   +-------------+---------+--------------+
-   | id          |         | id           |
-   | name        |         | name         |
-   | ...         |         | ...          |
-   | products    |1-------N| category     |
-   +-------------+         +--------------+
-```
-2 CRUDS are available, each root:
-- Categories: http://127.0.0.1:5000/api/v1/categories/*
-- Products: http://127.0.0.1:5000/api/v1/products/*
-- Check the Swagger UI for all routes: http://127.0.0.1:5000/docs
-
-## Running as a Docker container
-During development:
-
-```bash
-# Build the docker image
-make dev
-# Start the container
-make up
-```
-
-Make sure to have the right settings, these two in particular:
-```env
-# File: .env
-
-BIND_ADDR=0.0.0.0
-
-# make sure that mongodb host is: 'mongo' instead of '127.0.0.1'
-DATABASE_URL="mongodb://USERNAME:PASSWORD@HOST:PORT/DATABASE"
-# ...
-```
-
----
-
-## Building for production
-```
-# Build the image
-make prod
-```
-The production image uses [PM2](https://pm2.keymetrics.io/) for process management, see the content of `pm2.config.json` for settings.
-
----
-
-## Debugging
-```bash
-npm run debug
-```
-
-This will start the application with code inspection enabled for debugging.
-
-If using VSCode just open the Debug tab, and use the play Button.
-
-If not, use your favourite debugger and connect to: ```0.0.0.0:9229```
-
-## Hot-Reloading
-
-When running by `npm run start` or using the `dev` docker image, the app runs using `nodemon` watching for changes and recompiling the app if necessary.
-
+*本文件最後更新：2025-08-12*
