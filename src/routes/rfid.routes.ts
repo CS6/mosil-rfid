@@ -1,8 +1,8 @@
 import { FastifyInstance } from 'fastify';
-import { createRfid, batchCreateRfid } from '../controllers/rfid.controller';
+import { createRfid, batchCreateRfid, generateProductRfids, queryProductRfids } from '../controllers/rfid.controller';
 
 async function rfidRoutes(fastify: FastifyInstance) {
-  // Create RFID
+  // Create Single RFID (kept for backward compatibility)
   fastify.post('/rfid', {
     schema: {
       summary: '建立單一 RFID 標籤',
@@ -148,6 +148,158 @@ async function rfidRoutes(fastify: FastifyInstance) {
       }
     }
   }, batchCreateRfid);
+
+  // Generate Product RFID Labels - New specification format
+  fastify.post('/rfids/products', {
+    schema: {
+      summary: '批次產生商品 RFID 標籤',
+      description: '批次產生商品 RFID 標籤，根據 SKU 和數量產生',
+      tags: ['RFID'],
+      body: {
+        type: 'object',
+        required: ['sku', 'quantity'],
+        properties: {
+          sku: {
+            type: 'string',
+            minLength: 13,
+            maxLength: 13,
+            pattern: '^[A-Z0-9]+$',
+            description: 'SKU = 貨號(8) + 顏色(3) + 尺寸(2) = 13碼',
+            examples: ['A252600201234']
+          },
+          quantity: {
+            type: 'integer',
+            minimum: 1,
+            maximum: 1000,
+            description: '要產生的數量 (1-1000)',
+            examples: [100]
+          }
+        }
+      },
+      response: {
+        201: {
+          type: 'object',
+          properties: {
+            message: { type: 'string' },
+            data: {
+              type: 'object',
+              properties: {
+                sku: { 
+                  type: 'string',
+                  description: '商品 SKU',
+                  examples: ['A252600201234']
+                },
+                generatedCount: { 
+                  type: 'number',
+                  description: '實際產生的數量',
+                  examples: [100]
+                },
+                startSerial: { 
+                  type: 'string',
+                  description: '起始流水號',
+                  examples: ['0001']
+                },
+                endSerial: { 
+                  type: 'string',
+                  description: '結束流水號',
+                  examples: ['0100']
+                },
+                rfids: {
+                  type: 'array',
+                  description: '產生的 RFID 清單',
+                  items: { 
+                    type: 'string',
+                    examples: ['A2526002012340001', 'A2526002012340002']
+                  }
+                }
+              }
+            }
+          }
+        },
+        400: {
+          type: 'object',
+          properties: {
+            message: { type: 'string' },
+            errorCode: { type: 'string' },
+            details: { type: 'object', nullable: true }
+          }
+        }
+      }
+    }
+  }, generateProductRfids);
+
+  // Query Product RFID Labels
+  fastify.get('/rfids/products', {
+    schema: {
+      summary: '查詢商品 RFID 標籤',
+      description: '根據條件查詢商品 RFID 標籤',
+      tags: ['RFID'],
+      querystring: {
+        type: 'object',
+        properties: {
+          sku: { 
+            type: 'string',
+            description: '商品 SKU 篩選'
+          },
+          status: { 
+            type: 'string',
+            enum: ['available', 'bound', 'shipped'],
+            description: '狀態篩選'
+          },
+          boxno: { 
+            type: 'string',
+            description: '外箱編號篩選'
+          },
+          page: { 
+            type: 'integer', 
+            minimum: 1, 
+            default: 1,
+            description: '頁數' 
+          },
+          limit: { 
+            type: 'integer', 
+            minimum: 1, 
+            maximum: 100, 
+            default: 20,
+            description: '每頁筆數 (最多 100)' 
+          }
+        }
+      },
+      response: {
+        200: {
+          type: 'object',
+          properties: {
+            message: { type: 'string' },
+            data: {
+              type: 'object',
+              properties: {
+                rfids: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      rfid: { type: 'string' },
+                      sku: { type: 'string' },
+                      productNo: { type: 'string' },
+                      serialNo: { type: 'string' },
+                      status: { type: 'string', enum: ['available', 'bound', 'shipped'] },
+                      boxNo: { type: 'string', nullable: true },
+                      createdAt: { type: 'string', format: 'date-time' },
+                      updatedAt: { type: 'string', format: 'date-time' }
+                    }
+                  }
+                },
+                total: { type: 'number' },
+                page: { type: 'number' },
+                limit: { type: 'number' },
+                totalPages: { type: 'number' }
+              }
+            }
+          }
+        }
+      }
+    }
+  }, queryProductRfids);
 }
 
 export default rfidRoutes;
