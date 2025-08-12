@@ -12,26 +12,29 @@ async function rfidRoutes(fastify: FastifyInstance) {
         type: 'object',
         required: ['sku', 'serialNo'],
         properties: {
-          sku: { 
-            type: 'string', 
-            minLength: 13, 
+          sku: {
+            type: 'string',
+            minLength: 13,
             maxLength: 13,
             pattern: '^[A-Z0-9]+$',
-            description: 'SKU = 貨號(8) + 顏色(3) + 尺寸(2) = 13碼 (例: A252600201234)'
+            description: 'SKU = 貨號(8) + 顏色(3) + 尺寸(2) = 13碼',
+            examples: ['A252600201234', '6G970CR9T7MZ7']
           },
-          productNo: { 
-            type: 'string', 
-            minLength: 8, 
+          productNo: {
+            type: 'string',
+            minLength: 8,
             maxLength: 8,
             pattern: '^[A-Z0-9]+$',
-            description: '貨號 (選填，預設從 SKU 前8碼自動產生) (例: A2526002)'
+            description: '貨號 (選填，預設從 SKU 前8碼自動產生)',
+            examples: ['A2526002', '6G970CR9']
           },
-          serialNo: { 
-            type: 'string', 
-            minLength: 4, 
+          serialNo: {
+            type: 'string',
+            minLength: 4,
             maxLength: 4,
             pattern: '^\\d{4}$',
-            description: '流水號 (4位數字) (例: 0001)'
+            description: '流水號 (4位數字)',
+            examples: ['0001', '0414']
           }
         }
       },
@@ -39,7 +42,7 @@ async function rfidRoutes(fastify: FastifyInstance) {
         201: {
           type: 'object',
           properties: {
-            success: { type: 'boolean' },
+            message: { type: 'string' },
             data: {
               type: 'object',
               properties: {
@@ -52,6 +55,14 @@ async function rfidRoutes(fastify: FastifyInstance) {
                 createdAt: { type: 'string', format: 'date-time' }
               }
             }
+          }
+        },
+        400: {
+          type: 'object',
+          properties: {
+            message: { type: 'string' },
+            errorCode: { type: 'string' },
+            details: { type: 'object', nullable: true }
           }
         }
       }
@@ -68,23 +79,23 @@ async function rfidRoutes(fastify: FastifyInstance) {
         type: 'object',
         required: ['sku', 'startSerialNo', 'quantity'],
         properties: {
-          sku: { 
-            type: 'string', 
-            minLength: 13, 
+          sku: {
+            type: 'string',
+            minLength: 13,
             maxLength: 13,
             pattern: '^[A-Z0-9]+$',
             description: 'SKU = 貨號(8) + 顏色(3) + 尺寸(2) = 13碼 (例: SHIRT001REDXL)'
           },
-          productNo: { 
-            type: 'string', 
-            minLength: 8, 
+          productNo: {
+            type: 'string',
+            minLength: 8,
             maxLength: 8,
             pattern: '^[A-Z0-9]+$',
             description: '貨號 (選填，預設從 SKU 前8碼自動產生) (例: SHIRT001)'
           },
-          startSerialNo: { 
-            type: 'string', 
-            minLength: 4, 
+          startSerialNo: {
+            type: 'string',
+            minLength: 4,
             maxLength: 4,
             pattern: '^\\d{4}$',
             description: '起始流水號 (4位數字) (例: 0001)'
@@ -101,7 +112,7 @@ async function rfidRoutes(fastify: FastifyInstance) {
         201: {
           type: 'object',
           properties: {
-            success: { type: 'boolean' },
+            message: { type: 'string' },
             data: {
               type: 'object',
               properties: {
@@ -124,6 +135,14 @@ async function rfidRoutes(fastify: FastifyInstance) {
                 }
               }
             }
+          }
+        },
+        400: {
+          type: 'object',
+          properties: {
+            message: { type: 'string' },
+            errorCode: { type: 'string' },
+            details: { type: 'object', nullable: true }
           }
         }
       }

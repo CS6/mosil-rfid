@@ -14,6 +14,7 @@ import compressConfig from './config/compress.config';
 import prismaPlugin from './plugins/prisma.plugin';
 import helmetConfig from './config/helmet.config';
 import { swaggerConfig } from './config/swagger.config';
+import { setupErrorHandler } from './middleware/error-handler';
 
 import apiRoutes from './routes/categories.routes'; // This now contains our RFID system routes
 import { messageSchema, paramIdSchema, paginationSchema } from './schema/common.schema';
@@ -40,6 +41,9 @@ const main = async () => {
       routePrefix: '/docs',
     });
   }
+
+  // Setup error handling
+  setupErrorHandler(app);
 
   // API Endpoint routes
   await app.register(apiRoutes, { prefix: "/api/v1" });

@@ -6,16 +6,17 @@ import {
   PrismaSystemLogRepository
 } from '../infrastructure';
 import { RfidGenerationService, AuditService } from '../domain';
+import { ApiSuccessResponse } from '../types/api-response';
 
 interface CreateRfidBody {
   sku: string;
-  productNo: string;
+  productNo?: string;
   serialNo: string;
 }
 
 interface BatchCreateRfidBody {
   sku: string;
-  productNo: string;
+  productNo?: string;
   startSerialNo: string;
   quantity: number;
 }
@@ -52,15 +53,14 @@ export async function createRfid(
       ipAddress
     );
 
-    reply.status(201).send({
-      success: true,
+    const response: ApiSuccessResponse = {
+      message: "success",
       data: result
-    });
+    };
+    
+    reply.status(201).send(response);
   } catch (error) {
-    reply.status(400).send({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    });
+    throw error; // Let global error handler handle it
   }
 }
 
@@ -96,14 +96,13 @@ export async function batchCreateRfid(
       ipAddress
     );
 
-    reply.status(201).send({
-      success: true,
+    const response: ApiSuccessResponse = {
+      message: "success",
       data: result
-    });
+    };
+    
+    reply.status(201).send(response);
   } catch (error) {
-    reply.status(400).send({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    });
+    throw error; // Let global error handler handle it
   }
 }

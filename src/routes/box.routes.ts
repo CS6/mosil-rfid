@@ -25,7 +25,7 @@ async function boxRoutes(fastify: FastifyInstance) {
         201: {
           type: 'object',
           properties: {
-            success: { type: 'boolean' },
+            message: { type: 'string' },
             data: {
               type: 'object',
               properties: {
@@ -38,6 +38,14 @@ async function boxRoutes(fastify: FastifyInstance) {
                 updatedAt: { type: 'string', format: 'date-time' }
               }
             }
+          }
+        },
+        400: {
+          type: 'object',
+          properties: {
+            message: { type: 'string' },
+            errorCode: { type: 'string' },
+            details: { type: 'object', nullable: true }
           }
         }
       }
@@ -73,7 +81,7 @@ async function boxRoutes(fastify: FastifyInstance) {
         200: {
           type: 'object',
           properties: {
-            success: { type: 'boolean' },
+            message: { type: 'string' },
             data: {
               type: 'object',
               properties: {
@@ -98,6 +106,14 @@ async function boxRoutes(fastify: FastifyInstance) {
                 }
               }
             }
+          }
+        },
+        400: {
+          type: 'object',
+          properties: {
+            message: { type: 'string' },
+            errorCode: { type: 'string' },
+            details: { type: 'object', nullable: true }
           }
         }
       }
