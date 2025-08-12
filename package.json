@@ -1,6 +1,6 @@
 {
   "name": "fastify-prisma-swagger-rest-boilerplate",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Starting template to build Rest APIs, using Fastify, PrimsaJS and TypeScript. Providing OpenAPI/ SwaggerUI for docs. Also, Blazingly fast (breh!)",
   "main": "src/index.ts",
   "scripts": {
