@@ -29,7 +29,7 @@ async function shipmentRoutes(fastify: FastifyInstance) {
         201: {
           type: 'object',
           properties: {
-            message: { type: 'string' },
+            message: { type: 'string', enum: ['success'] },
             data: {
               type: 'object',
               properties: {
@@ -44,6 +44,15 @@ async function shipmentRoutes(fastify: FastifyInstance) {
               }
             }
           }
+        },
+        400: {
+          $ref: 'errorResponseSchema#'
+        },
+        401: {
+          $ref: 'unauthorizedResponseSchema#'
+        },
+        403: {
+          $ref: 'forbiddenResponseSchema#'
         }
       }
     }
@@ -77,7 +86,7 @@ async function shipmentRoutes(fastify: FastifyInstance) {
         200: {
           type: 'object',
           properties: {
-            success: { type: 'boolean' },
+            message: { type: 'string', enum: ['success'] },
             data: {
               type: 'object',
               properties: {
@@ -95,7 +104,6 @@ async function shipmentRoutes(fastify: FastifyInstance) {
                     type: 'object',
                     properties: {
                       boxNo: { type: 'string' },
-                      productCount: { type: 'number' },
                       createdAt: { type: 'string', format: 'date-time' }
                     }
                   }
@@ -103,6 +111,18 @@ async function shipmentRoutes(fastify: FastifyInstance) {
               }
             }
           }
+        },
+        400: {
+          $ref: 'errorResponseSchema#'
+        },
+        401: {
+          $ref: 'unauthorizedResponseSchema#'
+        },
+        403: {
+          $ref: 'forbiddenResponseSchema#'
+        },
+        404: {
+          $ref: 'errorResponseSchema#'
         }
       }
     }
@@ -130,7 +150,7 @@ async function shipmentRoutes(fastify: FastifyInstance) {
         200: {
           type: 'object',
           properties: {
-            success: { type: 'boolean' },
+            message: { type: 'string', enum: ['success'] },
             data: {
               type: 'object',
               properties: {
@@ -145,6 +165,18 @@ async function shipmentRoutes(fastify: FastifyInstance) {
               }
             }
           }
+        },
+        400: {
+          $ref: 'errorResponseSchema#'
+        },
+        401: {
+          $ref: 'unauthorizedResponseSchema#'
+        },
+        403: {
+          $ref: 'forbiddenResponseSchema#'
+        },
+        404: {
+          $ref: 'errorResponseSchema#'
         }
       }
     }

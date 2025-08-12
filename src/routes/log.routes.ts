@@ -57,7 +57,7 @@ async function logRoutes(fastify: FastifyInstance) {
         200: {
           type: 'object',
           properties: {
-            message: { type: 'string' },
+            message: { type: 'string', enum: ['success'] },
             data: {
               type: 'object',
               properties: {
@@ -100,7 +100,7 @@ async function logRoutes(fastify: FastifyInstance) {
         200: {
           type: 'object',
           properties: {
-            message: { type: 'string' },
+            message: { type: 'string', enum: ['success'] },
             data: {
               type: 'object',
               properties: {

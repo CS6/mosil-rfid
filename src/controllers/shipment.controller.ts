@@ -58,13 +58,13 @@ export async function createShipment(
     );
 
     reply.status(201).send({
-      success: true,
+      message: "success",
       data: result
     });
   } catch (error) {
     reply.status(400).send({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? error.message : 'Unknown error',
+      errorCode: 'SHIPMENT_ERROR'
     });
   }
 }
@@ -101,13 +101,13 @@ export async function addBoxToShipment(
     );
 
     reply.status(200).send({
-      success: true,
+      message: "success",
       data: result
     });
   } catch (error) {
     reply.status(400).send({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? error.message : 'Unknown error',
+      errorCode: 'SHIPMENT_ERROR'
     });
   }
 }
@@ -142,13 +142,13 @@ export async function shipShipment(
     );
 
     reply.status(200).send({
-      success: true,
+      message: "success",
       data: result
     });
   } catch (error) {
     reply.status(400).send({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? error.message : 'Unknown error',
+      errorCode: 'SHIPMENT_ERROR'
     });
   }
 }

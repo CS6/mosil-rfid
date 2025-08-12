@@ -26,14 +26,13 @@ async function boxRoutes(fastify: FastifyInstance) {
         201: {
           type: 'object',
           properties: {
-            message: { type: 'string' },
+            message: { type: 'string', enum: ['success'] },
             data: {
               type: 'object',
               properties: {
                 boxNo: { type: 'string', description: '箱號 (13碼)', examples: ['B001202500001'] },
                 code: { type: 'string', description: '3位編號', examples: ['001'] },
                 shipmentNo: { type: 'string', nullable: true },
-                productCount: { type: 'number' },
                 createdBy: { type: 'string' },
                 createdAt: { type: 'string', format: 'date-time' },
                 updatedAt: { type: 'string', format: 'date-time' }
@@ -42,12 +41,13 @@ async function boxRoutes(fastify: FastifyInstance) {
           }
         },
         400: {
-          type: 'object',
-          properties: {
-            message: { type: 'string' },
-            errorCode: { type: 'string' },
-            details: { type: 'object', nullable: true }
-          }
+          $ref: 'errorResponseSchema#'
+        },
+        401: {
+          $ref: 'unauthorizedResponseSchema#'
+        },
+        403: {
+          $ref: 'forbiddenResponseSchema#'
         }
       }
     }
@@ -84,7 +84,7 @@ async function boxRoutes(fastify: FastifyInstance) {
         201: {
           type: 'object',
           properties: {
-            message: { type: 'string' },
+            message: { type: 'string', enum: ['success'] },
             data: {
               type: 'object',
               properties: {
@@ -116,12 +116,13 @@ async function boxRoutes(fastify: FastifyInstance) {
           }
         },
         400: {
-          type: 'object',
-          properties: {
-            message: { type: 'string' },
-            errorCode: { type: 'string' },
-            details: { type: 'object', nullable: true }
-          }
+          $ref: 'errorResponseSchema#'
+        },
+        401: {
+          $ref: 'unauthorizedResponseSchema#'
+        },
+        403: {
+          $ref: 'forbiddenResponseSchema#'
         }
       }
     }
@@ -156,14 +157,13 @@ async function boxRoutes(fastify: FastifyInstance) {
         200: {
           type: 'object',
           properties: {
-            message: { type: 'string' },
+            message: { type: 'string', enum: ['success'] },
             data: {
               type: 'object',
               properties: {
                 boxNo: { type: 'string', description: '箱號 (13碼)', examples: ['B001202500001'] },
                 code: { type: 'string', description: '3位編號', examples: ['001'] },
                 shipmentNo: { type: 'string', nullable: true },
-                productCount: { type: 'number' },
                 createdBy: { type: 'string' },
                 createdAt: { type: 'string', format: 'date-time' },
                 updatedAt: { type: 'string', format: 'date-time' },
@@ -184,12 +184,13 @@ async function boxRoutes(fastify: FastifyInstance) {
           }
         },
         400: {
-          type: 'object',
-          properties: {
-            message: { type: 'string' },
-            errorCode: { type: 'string' },
-            details: { type: 'object', nullable: true }
-          }
+          $ref: 'errorResponseSchema#'
+        },
+        401: {
+          $ref: 'unauthorizedResponseSchema#'
+        },
+        403: {
+          $ref: 'forbiddenResponseSchema#'
         }
       }
     }
@@ -226,14 +227,13 @@ async function boxRoutes(fastify: FastifyInstance) {
         200: {
           type: 'object',
           properties: {
-            message: { type: 'string' },
+            message: { type: 'string', enum: ['success'] },
             data: {
               type: 'object',
               properties: {
                 boxNo: { type: 'string', description: '箱號 (13碼)', examples: ['B001202500001'] },
                 code: { type: 'string', description: '3位編號', examples: ['001'] },
                 shipmentNo: { type: 'string', nullable: true },
-                productCount: { type: 'number' },
                 createdBy: { type: 'string' },
                 createdAt: { type: 'string', format: 'date-time' },
                 updatedAt: { type: 'string', format: 'date-time' },
@@ -254,12 +254,13 @@ async function boxRoutes(fastify: FastifyInstance) {
           }
         },
         400: {
-          type: 'object',
-          properties: {
-            message: { type: 'string' },
-            errorCode: { type: 'string' },
-            details: { type: 'object', nullable: true }
-          }
+          $ref: 'errorResponseSchema#'
+        },
+        401: {
+          $ref: 'unauthorizedResponseSchema#'
+        },
+        403: {
+          $ref: 'forbiddenResponseSchema#'
         }
       }
     }
@@ -302,7 +303,7 @@ async function boxRoutes(fastify: FastifyInstance) {
         200: {
           type: 'object',
           properties: {
-            message: { type: 'string' },
+            message: { type: 'string', enum: ['success'] },
             data: {
               type: 'object',
               properties: {
@@ -314,8 +315,7 @@ async function boxRoutes(fastify: FastifyInstance) {
                       boxNo: { type: 'string', description: '箱號 (13碼)' },
                       code: { type: 'string', description: '3位編號' },
                       shipmentNo: { type: 'string', nullable: true },
-                      productCount: { type: 'number' },
-                      status: { type: 'string', enum: ['CREATED', 'PACKED', 'SHIPPED'] },
+                            status: { type: 'string', enum: ['CREATED', 'PACKED', 'SHIPPED'] },
                       createdBy: { type: 'string' },
                       createdAt: { type: 'string', format: 'date-time' },
                       updatedAt: { type: 'string', format: 'date-time' }
@@ -372,14 +372,13 @@ async function boxRoutes(fastify: FastifyInstance) {
         200: {
           type: 'object',
           properties: {
-            message: { type: 'string' },
+            message: { type: 'string', enum: ['success'] },
             data: {
               type: 'object',
               properties: {
                 boxNo: { type: 'string', description: '箱號 (13碼)' },
                 code: { type: 'string', description: '3位編號' },
                 shipmentNo: { type: 'string', nullable: true },
-                productCount: { type: 'number' },
                 status: { type: 'string', enum: ['CREATED', 'PACKED', 'SHIPPED'] },
                 productRfids: {
                   type: 'array',

@@ -43,6 +43,40 @@ export const errorResponseSchema = {
   required: ['message', 'errorCode']
 };
 
+// Standard success response schema
+export const successResponseSchema = {
+  $id: 'successResponseSchema',
+  type: 'object',
+  properties: {
+    message: { type: 'string', enum: ['success'] },
+    data: { type: 'object' }
+  },
+  required: ['message', 'data']
+};
+
+// Standard pagination schema  
+export const paginationResponseSchema = {
+  $id: 'paginationResponseSchema',
+  type: 'object',
+  properties: {
+    message: { type: 'string', enum: ['success'] },
+    data: { type: 'array' },
+    pagination: {
+      type: 'object',
+      properties: {
+        total: { type: 'number' },
+        perPage: { type: 'number' },
+        currentPage: { type: 'number' },
+        totalPages: { type: 'number' },
+        hasNext: { type: 'boolean' },
+        hasPrev: { type: 'boolean' }
+      },
+      required: ['total', 'perPage', 'currentPage', 'totalPages', 'hasNext', 'hasPrev']
+    }
+  },
+  required: ['message', 'data', 'pagination']
+};
+
 // Standard authentication error responses
 export const unauthorizedResponseSchema = {
   $id: 'unauthorizedResponseSchema',

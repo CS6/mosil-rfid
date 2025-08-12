@@ -50,7 +50,7 @@ async function userRoutes(fastify: FastifyInstance) {
         201: {
           type: 'object',
           properties: {
-            message: { type: 'string' },
+            message: { type: 'string', enum: ['success'] },
             data: {
               type: 'object',
               properties: {
@@ -67,12 +67,13 @@ async function userRoutes(fastify: FastifyInstance) {
           }
         },
         400: {
-          type: 'object',
-          properties: {
-            message: { type: 'string' },
-            errorCode: { type: 'string' },
-            details: { type: 'object', nullable: true }
-          }
+          $ref: 'errorResponseSchema#'
+        },
+        401: {
+          $ref: 'unauthorizedResponseSchema#'
+        },
+        403: {
+          $ref: 'forbiddenResponseSchema#'
         }
       }
     }
@@ -115,7 +116,7 @@ async function userRoutes(fastify: FastifyInstance) {
         200: {
           type: 'object',
           properties: {
-            message: { type: 'string' },
+            message: { type: 'string', enum: ['success'] },
             data: {
               type: 'object',
               properties: {
@@ -168,7 +169,7 @@ async function userRoutes(fastify: FastifyInstance) {
         200: {
           type: 'object',
           properties: {
-            message: { type: 'string' },
+            message: { type: 'string', enum: ['success'] },
             data: {
               type: 'object',
               properties: {
@@ -185,12 +186,7 @@ async function userRoutes(fastify: FastifyInstance) {
           }
         },
         404: {
-          type: 'object',
-          properties: {
-            message: { type: 'string' },
-            errorCode: { type: 'string' },
-            details: { type: 'object', nullable: true }
-          }
+          $ref: 'errorResponseSchema#'
         }
       }
     }
@@ -253,7 +249,7 @@ async function userRoutes(fastify: FastifyInstance) {
         200: {
           type: 'object',
           properties: {
-            message: { type: 'string' },
+            message: { type: 'string', enum: ['success'] },
             data: {
               type: 'object',
               properties: {
@@ -270,12 +266,7 @@ async function userRoutes(fastify: FastifyInstance) {
           }
         },
         404: {
-          type: 'object',
-          properties: {
-            message: { type: 'string' },
-            errorCode: { type: 'string' },
-            details: { type: 'object', nullable: true }
-          }
+          $ref: 'errorResponseSchema#'
         }
       }
     }
@@ -302,17 +293,12 @@ async function userRoutes(fastify: FastifyInstance) {
         200: {
           type: 'object',
           properties: {
-            message: { type: 'string' },
+            message: { type: 'string', enum: ['success'] },
             data: { type: 'null' }
           }
         },
         404: {
-          type: 'object',
-          properties: {
-            message: { type: 'string' },
-            errorCode: { type: 'string' },
-            details: { type: 'object', nullable: true }
-          }
+          $ref: 'errorResponseSchema#'
         }
       }
     }

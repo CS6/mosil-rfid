@@ -42,7 +42,7 @@ async function rfidRoutes(fastify: FastifyInstance) {
         201: {
           type: 'object',
           properties: {
-            message: { type: 'string' },
+            message: { type: 'string', enum: ['success'] },
             data: {
               type: 'object',
               properties: {
@@ -113,7 +113,7 @@ async function rfidRoutes(fastify: FastifyInstance) {
         201: {
           type: 'object',
           properties: {
-            message: { type: 'string' },
+            message: { type: 'string', enum: ['success'] },
             data: {
               type: 'object',
               properties: {
@@ -182,7 +182,7 @@ async function rfidRoutes(fastify: FastifyInstance) {
         201: {
           type: 'object',
           properties: {
-            message: { type: 'string' },
+            message: { type: 'string', enum: ['success'] },
             data: {
               type: 'object',
               properties: {
@@ -272,7 +272,7 @@ async function rfidRoutes(fastify: FastifyInstance) {
         200: {
           type: 'object',
           properties: {
-            message: { type: 'string' },
+            message: { type: 'string', enum: ['success'] },
             data: {
               type: 'object',
               properties: {
