@@ -19,6 +19,11 @@ export interface AddRfidToBoxRequest {
   rfid: string;
 }
 
+export interface RemoveRfidFromBoxRequest {
+  boxNo: string;
+  rfid: string;
+}
+
 export interface BoxResponse {
   boxNo: string;
   code: string; // 3位編號

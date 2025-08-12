@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { createBox, createBatchBoxes, addRfidToBox } from '../controllers/box.controller';
+import { createBox, createBatchBoxes, addRfidToBox, removeRfidFromBox } from '../controllers/box.controller';
 
 async function boxRoutes(fastify: FastifyInstance) {
   // Create single Box  
@@ -194,6 +194,76 @@ async function boxRoutes(fastify: FastifyInstance) {
       }
     }
   }, addRfidToBox);
+
+  // Remove RFID from Box
+  fastify.post('/box/remove-rfid', {
+    schema: {
+      summary: '將 RFID 從箱子移除',
+      description: '將 RFID 標籤商品從指定箱子移除',
+      tags: ['Box'],
+      body: {
+        type: 'object',
+        required: ['boxNo', 'rfid'],
+        properties: {
+          boxNo: { 
+            type: 'string', 
+            minLength: 13, 
+            maxLength: 13,
+            description: '箱號 (13碼)',
+            examples: ['B001202500001']
+          },
+          rfid: { 
+            type: 'string', 
+            minLength: 17, 
+            maxLength: 17,
+            pattern: '^[A-Z0-9]+$',
+            description: 'RFID 標籤 (17碼)',
+            examples: ['A252600201234ABCD']
+          }
+        }
+      },
+      response: {
+        200: {
+          type: 'object',
+          properties: {
+            message: { type: 'string' },
+            data: {
+              type: 'object',
+              properties: {
+                boxNo: { type: 'string', description: '箱號 (13碼)', examples: ['B001202500001'] },
+                code: { type: 'string', description: '3位編號', examples: ['001'] },
+                shipmentNo: { type: 'string', nullable: true },
+                productCount: { type: 'number' },
+                createdBy: { type: 'string' },
+                createdAt: { type: 'string', format: 'date-time' },
+                updatedAt: { type: 'string', format: 'date-time' },
+                productRfids: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      rfid: { type: 'string' },
+                      sku: { type: 'string' },
+                      productNo: { type: 'string' },
+                      serialNo: { type: 'string' }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        400: {
+          type: 'object',
+          properties: {
+            message: { type: 'string' },
+            errorCode: { type: 'string' },
+            details: { type: 'object', nullable: true }
+          }
+        }
+      }
+    }
+  }, removeRfidFromBox);
 }
 
 export default boxRoutes;

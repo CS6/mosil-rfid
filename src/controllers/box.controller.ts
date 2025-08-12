@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { CreateBoxUseCase, CreateBatchBoxesUseCase, AddRfidToBoxUseCase } from '../application';
+import { CreateBoxUseCase, CreateBatchBoxesUseCase, AddRfidToBoxUseCase, RemoveRfidFromBoxUseCase } from '../application';
 import { 
   PrismaBoxRepository, 
   PrismaUserRepository,
@@ -19,6 +19,11 @@ interface CreateBatchBoxBody {
 }
 
 interface AddRfidToBoxBody {
+  boxNo: string;
+  rfid: string;
+}
+
+interface RemoveRfidFromBoxBody {
   boxNo: string;
   rfid: string;
 }
@@ -144,6 +149,47 @@ export async function createBatchBoxes(
     };
     
     reply.status(201).send(response);
+  } catch (error) {
+    throw error; // Let global error handler handle it
+  }
+}
+export async function removeRfidFromBox(
+  request: FastifyRequest<{ Body: RemoveRfidFromBoxBody }>,
+  reply: FastifyReply
+): Promise<void> {
+  try {
+    // Initialize repositories
+    const boxRepository = new PrismaBoxRepository(request.server.prisma);
+    const productRfidRepository = new PrismaProductRfidRepository(request.server.prisma);
+    const userRepository = new PrismaUserRepository(request.server.prisma);
+    const systemLogRepository = new PrismaSystemLogRepository(request.server.prisma);
+
+    // Initialize services
+    const auditService = new AuditService(systemLogRepository);
+
+    // Initialize use case
+    const removeRfidFromBoxUseCase = new RemoveRfidFromBoxUseCase(
+      boxRepository,
+      productRfidRepository,
+      userRepository,
+      auditService
+    );
+
+    const userUuid = "dummy-user-uuid";
+    const ipAddress = request.ip;
+
+    const result = await removeRfidFromBoxUseCase.execute(
+      request.body,
+      userUuid,
+      ipAddress
+    );
+
+    const response: ApiSuccessResponse = {
+      message: "success",
+      data: result
+    };
+    
+    reply.status(200).send(response);
   } catch (error) {
     throw error; // Let global error handler handle it
   }
