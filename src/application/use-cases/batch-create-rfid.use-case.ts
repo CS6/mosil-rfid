@@ -33,7 +33,7 @@ export class BatchCreateRfidUseCase {
 
     // 驗證請求參數
     const sku = new SKU(request.sku);
-    const productNo = new ProductNumber(request.productNo);
+    const productNo = request.productNo ? new ProductNumber(request.productNo) : null;
     const startSerial = parseInt(request.startSerialNo, 10);
 
     if (isNaN(startSerial) || startSerial < 1 || startSerial > 9999) {
@@ -57,7 +57,7 @@ export class BatchCreateRfidUseCase {
         results.push({
           rfid: '',
           sku: request.sku,
-          productNo: request.productNo,
+          productNo: request.productNo || request.sku.substring(0, 8),
           serialNo: currentSerial.toString().padStart(4, '0'),
           status: 'skipped',
           reason: 'Serial number exceeds 9999'
@@ -80,7 +80,7 @@ export class BatchCreateRfidUseCase {
           results.push({
             rfid: existingSerial.getRfid().getValue(),
             sku: request.sku,
-            productNo: request.productNo,
+            productNo: request.productNo || request.sku.substring(0, 8),
             serialNo: serialNoStr,
             status: 'skipped',
             reason: 'Serial number already exists'
@@ -112,7 +112,7 @@ export class BatchCreateRfidUseCase {
         results.push({
           rfid: '',
           sku: request.sku,
-          productNo: request.productNo,
+          productNo: request.productNo || request.sku.substring(0, 8),
           serialNo: serialNoStr,
           status: 'skipped',
           reason: error instanceof Error ? error.message : 'Unknown error'

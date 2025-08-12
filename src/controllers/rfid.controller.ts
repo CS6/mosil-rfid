@@ -1,7 +1,7 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { CreateRfidUseCase, BatchCreateRfidUseCase } from '../application';
-import { 
-  PrismaProductRfidRepository, 
+import {
+  PrismaProductRfidRepository,
   PrismaUserRepository,
   PrismaSystemLogRepository
 } from '../infrastructure';

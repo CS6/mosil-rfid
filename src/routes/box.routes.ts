@@ -5,7 +5,8 @@ async function boxRoutes(fastify: FastifyInstance) {
   // Create Box
   fastify.post('/box', {
     schema: {
-      description: 'Create a new box',
+      summary: '建立新箱子',
+      description: '建立新的箱子用於存放 RFID 標籤商品',
       tags: ['Box'],
       body: {
         type: 'object',
@@ -46,7 +47,8 @@ async function boxRoutes(fastify: FastifyInstance) {
   // Add RFID to Box
   fastify.post('/box/add-rfid', {
     schema: {
-      description: 'Add RFID tag to a box',
+      summary: '將 RFID 加入箱子',
+      description: '將 RFID 標籤商品加入指定箱子',
       tags: ['Box'],
       body: {
         type: 'object',
@@ -62,8 +64,8 @@ async function boxRoutes(fastify: FastifyInstance) {
             type: 'string', 
             minLength: 17, 
             maxLength: 17,
-            pattern: '^[A-F0-9]+$',
-            description: 'RFID tag (17 characters, uppercase hex)'
+            pattern: '^[A-Z0-9]+$',
+            description: 'RFID tag (17 characters, uppercase letters and numbers)'
           }
         }
       },

@@ -1,6 +1,6 @@
 export interface CreateRfidRequest {
   sku: string;
-  productNo: string;
+  productNo?: string;
   serialNo: string;
 }
 

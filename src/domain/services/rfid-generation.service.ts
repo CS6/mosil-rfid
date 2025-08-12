@@ -7,19 +7,22 @@ export class RfidGenerationService {
 
   public async generateRfid(
     sku: SKU,
-    productNo: ProductNumber,
+    productNo: ProductNumber | null,
     serialNo: SerialNumber,
     createdBy: string
   ): Promise<ProductRfid> {
-    // 驗證 ProductNo 必須是 SKU 的前 8 碼
     const skuValue = sku.getValue();
-    const productNoValue = productNo.getValue();
     
+    // 如果沒有提供 ProductNo，從 SKU 前 8 碼自動產生
+    const finalProductNo = productNo || new ProductNumber(skuValue.substring(0, 8));
+    const productNoValue = finalProductNo.getValue();
+    
+    // 驗證 ProductNo 必須是 SKU 的前 8 碼
     if (skuValue.substring(0, 8) !== productNoValue) {
       throw new Error(`ProductNo ${productNoValue} does not match SKU prefix ${skuValue.substring(0, 8)}`);
     }
 
-    const rfidValue = this.generateRfidValue(sku, productNo, serialNo);
+    const rfidValue = this.generateRfidValue(sku, finalProductNo, serialNo);
     const rfidTag = new RfidTag(rfidValue);
 
     const existingRfid = await this.productRfidRepository.findByRfid(rfidTag);
@@ -30,7 +33,7 @@ export class RfidGenerationService {
     return new ProductRfid(
       rfidTag,
       sku,
-      productNo,
+      finalProductNo,
       serialNo,
       createdBy
     );

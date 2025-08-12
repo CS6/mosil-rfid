@@ -15,8 +15,8 @@ export class RfidTag {
       throw new Error('RFID tag must be exactly 17 characters');
     }
 
-    if (!/^[A-F0-9]+$/.test(value)) {
-      throw new Error('RFID tag must contain only uppercase hex characters');
+    if (!/^[A-Z0-9]+$/.test(value)) {
+      throw new Error('RFID tag must contain only uppercase letters and numbers');
     }
   }
 

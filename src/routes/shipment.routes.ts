@@ -5,7 +5,8 @@ async function shipmentRoutes(fastify: FastifyInstance) {
   // Create Shipment
   fastify.post('/shipment', {
     schema: {
-      description: 'Create a new shipment',
+      summary: '建立新出貨單',
+      description: '建立新的出貨單以管理多個箱子',
       tags: ['Shipment'],
       body: {
         type: 'object',
@@ -51,7 +52,8 @@ async function shipmentRoutes(fastify: FastifyInstance) {
   // Add Box to Shipment
   fastify.post('/shipment/add-box', {
     schema: {
-      description: 'Add box to a shipment',
+      summary: '將箱子加入出貨單',
+      description: '將已裝箱的商品加入出貨單',
       tags: ['Shipment'],
       body: {
         type: 'object',
@@ -109,7 +111,8 @@ async function shipmentRoutes(fastify: FastifyInstance) {
   // Ship Shipment
   fastify.post('/shipment/ship', {
     schema: {
-      description: 'Ship a shipment',
+      summary: '出貨',
+      description: '將出貨單狀態變更為已出貨（不可再修改）',
       tags: ['Shipment'],
       body: {
         type: 'object',

@@ -1,6 +1,6 @@
 export interface BatchCreateRfidRequest {
   sku: string;           // 13碼: 貨號(8) + 顏色(3) + 尺寸(2)
-  productNo: string;     // 8碼: 貨號（必須等於 SKU 前8碼）
+  productNo?: string;    // 8碼: 貨號（選填，預設從 SKU 前8碼自動產生）
   startSerialNo: string; // 4碼: 起始流水號
   quantity: number;      // 要產生的數量
 }

@@ -1,20 +1,21 @@
 export const swaggerConfig = {
   swagger: {
     info: {
-      title: 'RESTful APIs using Fastify',
-      description: 'CRUDs using Swagger, Fastify and Prisma',
-      version: '0.0.1'
+      title: 'RFID 系統 API',
+      description: 'RFID 商品標籤管理系統 - 使用 Fastify, Prisma 和 DDD 架構',
+      version: '1.0.0'
     },
     externalDocs: {
-      url: 'https://swagger.io',
-      description: 'Find more info here'
+      url: 'https://github.com/your-repo/rfid-system',
+      description: '更多資訊請參考 GitHub'
     },
     schemes: ['http'],
     consumes: ['application/json'],
     produces: ['application/json'],
     tags: [
-      { name: 'categories', description: 'Category related end-points' },
-      { name: 'products', description: 'Product related end-points' }
+      { name: 'RFID', description: 'RFID 標籤管理相關 API' },
+      { name: 'Box', description: '箱子管理相關 API' },
+      { name: 'Shipment', description: '出貨單管理相關 API' }
     ],
   }
 };

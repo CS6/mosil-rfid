@@ -32,7 +32,7 @@ export class CreateRfidUseCase {
     }
 
     const sku = new SKU(request.sku);
-    const productNo = new ProductNumber(request.productNo);
+    const productNo = request.productNo ? new ProductNumber(request.productNo) : null;
     const serialNo = new SerialNumber(request.serialNo);
 
     const existingRfids = await this.productRfidRepository.findBySku(sku);
