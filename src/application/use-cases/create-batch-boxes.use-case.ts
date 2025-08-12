@@ -4,7 +4,7 @@ import {
   BoxGenerationService,
   AuditService
 } from '../../domain';
-import { CreateBatchBoxRequest, BoxResponse } from '../dtos';
+import { CreateBatchBoxRequest, BatchBoxResponse } from '../dtos';
 
 export class CreateBatchBoxesUseCase {
   constructor(
@@ -18,7 +18,7 @@ export class CreateBatchBoxesUseCase {
     request: CreateBatchBoxRequest,
     userUuid: string,
     ipAddress?: string
-  ): Promise<BoxResponse[]> {
+  ): Promise<BatchBoxResponse> {
     const user = await this.userRepository.findByUuid(userUuid);
     if (!user) {
       throw new Error('User not found');
@@ -47,14 +47,14 @@ export class CreateBatchBoxesUseCase {
       ipAddress
     );
 
-    return boxes.map(box => ({
-      boxNo: box.getBoxNo().getValue(),
-      code: box.getCode(),
-      shipmentNo: box.getShipmentNo()?.getValue(),
-      productCount: box.getProductCount(),
-      createdBy: box.getCreatedBy(),
-      createdAt: box.getCreatedAt(),
-      updatedAt: box.getUpdatedAt()
-    }));
+    const currentYear = new Date().getFullYear().toString();
+    const boxnos = boxes.map(box => box.getBoxNo().getValue());
+
+    return {
+      code: request.code,
+      year: currentYear,
+      generatedCount: boxes.length,
+      boxnos
+    };
   }
 }

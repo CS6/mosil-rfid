@@ -7,6 +7,13 @@ export interface CreateBatchBoxRequest {
   quantity: number; // 數量
 }
 
+export interface BatchBoxResponse {
+  code: string;
+  year: string;
+  generatedCount: number;
+  boxnos: string[];
+}
+
 export interface AddRfidToBoxRequest {
   boxNo: string;
   rfid: string;

@@ -86,17 +86,30 @@ async function boxRoutes(fastify: FastifyInstance) {
           properties: {
             message: { type: 'string' },
             data: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  boxNo: { type: 'string', description: '箱號 (13碼)', examples: ['B001202500001'] },
-                  code: { type: 'string', description: '3位編號', examples: ['001'] },
-                  shipmentNo: { type: 'string', nullable: true },
-                  productCount: { type: 'number' },
-                  createdBy: { type: 'string' },
-                  createdAt: { type: 'string', format: 'date-time' },
-                  updatedAt: { type: 'string', format: 'date-time' }
+              type: 'object',
+              properties: {
+                code: { 
+                  type: 'string', 
+                  description: '3位編號',
+                  examples: ['001']
+                },
+                year: { 
+                  type: 'string', 
+                  description: '年份',
+                  examples: ['2025']
+                },
+                generatedCount: { 
+                  type: 'number', 
+                  description: '產生的箱號數量',
+                  examples: [10]
+                },
+                boxnos: {
+                  type: 'array',
+                  description: '產生的箱號列表',
+                  items: { 
+                    type: 'string',
+                    examples: ['B001202500001', 'B001202500002']
+                  }
                 }
               }
             }
