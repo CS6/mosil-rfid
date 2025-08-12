@@ -1,5 +1,6 @@
 import { UserCode } from '../value-objects';
 import { UserType } from '../enums';
+import { v4 as uuidv4 } from 'uuid';
 
 export class User {
   constructor(
@@ -78,9 +79,34 @@ export class User {
     return this.uuid === other.uuid;
   }
 
+  public getPasswordHash(): string {
+    return this.password;
+  }
+
   public validatePassword(plainPassword: string): boolean {
     // In a real application, this would use proper password hashing comparison
     // For now, we'll just reference the password to avoid TypeScript warning
     return this.password === plainPassword;
+  }
+
+  public static create(
+    account: string,
+    hashedPassword: string,
+    code: UserCode,
+    name: string,
+    userType: string
+  ): User {
+    return new User(
+      uuidv4(),
+      account,
+      hashedPassword,
+      code,
+      name,
+      userType as UserType,
+      true, // isActive
+      undefined, // lastLoginAt
+      new Date(), // createdAt
+      new Date() // updatedAt
+    );
   }
 }
