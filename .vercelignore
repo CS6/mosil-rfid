@@ -1,0 +1,16 @@
+node_modules
+.env.local
+.env.development.local
+.env.production.local
+test/
+docs/
+*.md
+docker-compose*.yml
+Dockerfile
+Makefile
+nodemon.json
+jest.config.js
+.git
+dist/
+src/index.ts
+pm2.config.json

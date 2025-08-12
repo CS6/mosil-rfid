@@ -57,6 +57,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^18.19.122",
     "@types/supertest": "^6.0.3",
+    "@vercel/node": "^5.3.11",
     "fastify-tsconfig": "^1.0.1",
     "jest": "^30.0.5",
     "nodemon": "^2.0.22",
