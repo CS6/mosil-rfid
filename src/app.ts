@@ -25,7 +25,12 @@ const main = async () => {
   // Now we setup our app, plugins and such
   await app.register(fastifyEnv, envConfig);
   await app.register(fastifyCors, corsConfig);
-  await app.register(fastifyCompress, compressConfig);
+  
+  // Only enable compression in development - Vercel handles compression in production
+  if (process.env.NODE_ENV !== 'production') {
+    await app.register(fastifyCompress, compressConfig);
+  }
+  
   await app.register(fastifyHelmet, helmetConfig);
   await app.register(prismaPlugin);
 

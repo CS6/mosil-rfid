@@ -19,10 +19,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }).then((response: any) => {
       res.status(response.statusCode);
       
-      // Set headers
+      // Set headers, but skip content-encoding to avoid conflicts
       Object.keys(response.headers).forEach(key => {
-        res.setHeader(key, response.headers[key]);
+        if (key.toLowerCase() !== 'content-encoding' && key.toLowerCase() !== 'transfer-encoding') {
+          res.setHeader(key, response.headers[key]);
+        }
       });
+      
+      // Ensure proper content type for JSON responses
+      if (req.url?.includes('/docs/json')) {
+        res.setHeader('content-type', 'application/json; charset=utf-8');
+      }
       
       res.send(response.payload);
     });
