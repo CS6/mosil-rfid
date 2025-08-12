@@ -1,22 +1,16 @@
-import { FastifyInstance } from "fastify";
+import { FastifyInstance } from 'fastify';
+import rfidRoutes from './rfid.routes';
+import boxRoutes from './box.routes';
+import shipmentRoutes from './shipment.routes';
 
-import { createCategory, deleteCategory, getCategories, getCategory, updateCategory } from "../controllers/categories.controller";
-import { createSchema, deleteSchema, getAllSchema, getSchema, updateSchema } from "../schema/categories.schema";
+export default async function apiRoutes(fastify: FastifyInstance) {
+  // Register RFID system routes
+  fastify.register(rfidRoutes);
+  fastify.register(boxRoutes);
+  fastify.register(shipmentRoutes);
 
-export default async function (fastify: FastifyInstance) {
-  // List all categories, paginated
-  fastify.get('/', { schema: getAllSchema }, getCategories);
-
-  // Get one category
-  fastify.get('/:id', { schema: getSchema }, getCategory);
-
-  // Deleteing a Category
-  fastify.delete('/:id', { schema: deleteSchema }, deleteCategory);
-
-  // Create a new Category
-  fastify.post('/', { schema: createSchema }, createCategory);
-
-  // Update an existing Category
-  fastify.put('/:id', { schema: updateSchema }, updateCategory);
+  // Health check endpoint
+  fastify.get('/health', async (request, reply) => {
+    return { status: 'ok', timestamp: new Date().toISOString() };
+  });
 }
-

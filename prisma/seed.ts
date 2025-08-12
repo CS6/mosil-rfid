@@ -1,53 +1,35 @@
 import { PrismaClient } from '@prisma/client';
-import { faker } from '@faker-js/faker';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  const categories = [];
+  console.log('Start seeding...');
 
-  // Create 10 categories
-  for (let i = 1; i <= 10; i++) {
-    const category = await prisma.category.create({
-      data: {
-        name: faker.commerce.department(),
-        createdAt: faker.date.past(1),
-      },
-      include: {
-        products: true,
-      },
-    });
+  // Create a dummy user for testing
+  const user = await prisma.user.upsert({
+    where: { uuid: 'dummy-user-uuid' },
+    update: {},
+    create: {
+      uuid: 'dummy-user-uuid',
+      account: 'testuser',
+      password: 'hashed-password-placeholder', // In real app, this should be hashed
+      code: 'TST',
+      name: 'Test User',
+      userType: 'admin',
+      isActive: true,
+    },
+  });
 
-    categories.push(category);
-  }
-
-  // Create 10 products for each category
-  for (const category of categories) {
-    for (let i = 1; i <= 10; i++) {
-      const product = await prisma.product.create({
-        data: {
-          name: faker.commerce.productName(),
-          price: parseFloat(faker.commerce.price()),
-          published: faker.datatype.boolean(),
-          category: {
-            connect: {
-              id: category.id,
-            },
-          },
-          createdAt: faker.date.past(1),
-        },
-      });
-
-      console.log(`Created product ${product.name} in category ${category.name}`);
-    }
-  }
+  console.log('Created user:', user);
+  console.log('Seeding finished.');
 }
 
 main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
+  .then(async () => {
     await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
   });

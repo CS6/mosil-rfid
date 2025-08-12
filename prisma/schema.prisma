@@ -1,5 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// RFID 系統 Prisma Schema
+// 基於簡化版資料庫設計
 
 generator client {
   provider = "prisma-client-js"
@@ -12,23 +12,128 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model Category {
-  id         String     @id @default(uuid())
-  name       String
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime?  @updatedAt
-  products   Product[]
+model User {
+  uuid          String    @id @default(uuid())
+  account       String    @unique
+  password      String
+  code          String    @unique @db.VarChar(3)
+  name          String    @db.VarChar(50)
+  userType      UserType
+  isActive      Boolean   @default(true)
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  systemLogs    SystemLog[]
+  createdRfids  ProductRfid[] @relation("RfidCreator")
+  createdBoxes  Box[] @relation("BoxCreator")
+  createdShipments Shipment[] @relation("ShipmentCreator")
+
+  @@index([account])
+  @@index([code])
+  @@index([userType])
 }
 
-model Product {
-  id         String     @id @default(uuid())
-  name       String
-  price      Float
-  published  Boolean    @default(false)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime?  @updatedAt
+model SystemLog {
+  id           BigInt   @id @default(autoincrement())
+  userUuid     String
+  action       String   @db.VarChar(50)
+  targetType   String?  @db.VarChar(50)
+  targetId     String?  @db.VarChar(50)
+  description  String?
+  ipAddress    String?  @db.VarChar(45)
+  createdAt    DateTime @default(now())
 
-  category   Category?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  categoryId String?
+  // Relations
+  user User @relation(fields: [userUuid], references: [uuid], onDelete: Cascade)
+
+  @@index([userUuid])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model ProductRfid {
+  rfid       String   @id @db.VarChar(17)
+  sku        String   @db.VarChar(13)
+  productNo  String   @db.VarChar(8)
+  serialNo   String   @db.VarChar(4)
+  boxNo      String?  @db.VarChar(13)
+  createdBy  String
+  createdAt  DateTime @default(now())
+
+  // Relations
+  creator User @relation("RfidCreator", fields: [createdBy], references: [uuid], onDelete: Restrict)
+  box     Box? @relation(fields: [boxNo], references: [boxNo], onDelete: SetNull)
+
+  @@unique([sku, serialNo])
+  @@index([sku])
+  @@index([productNo])
+  @@index([boxNo])
+  @@index([serialNo])
+}
+
+model Box {
+  boxNo        String   @id @db.VarChar(13)
+  userCode     String   @db.VarChar(3)
+  shipmentNo   String?  @db.VarChar(16)
+  createdBy    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  creator     User @relation("BoxCreator", fields: [createdBy], references: [uuid], onDelete: Restrict)
+  shipment    Shipment? @relation(fields: [shipmentNo], references: [shipmentNo], onDelete: SetNull)
+  productRfids ProductRfid[]
+  productStats BoxProductStat[]
+
+  @@index([userCode])
+  @@index([shipmentNo])
+  @@index([createdAt])
+}
+
+model BoxProductStat {
+  id        BigInt @id @default(autoincrement())
+  boxNo     String @db.VarChar(13)
+  productNo String @db.VarChar(8)
+  sku       String @db.VarChar(13)
+  quantity  Int    @default(0)
+
+  // Relations
+  box Box @relation(fields: [boxNo], references: [boxNo], onDelete: Cascade)
+
+  @@unique([boxNo, sku])
+  @@index([boxNo])
+  @@index([productNo])
+}
+
+model Shipment {
+  shipmentNo String   @id @db.VarChar(16)
+  userCode   String   @db.VarChar(3)
+  boxCount   Int      @default(0)
+  status     ShipmentStatus @default(CREATED)
+  note       String?
+  createdBy  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  creator User @relation("ShipmentCreator", fields: [createdBy], references: [uuid], onDelete: Restrict)
+  boxes   Box[]
+
+  @@index([userCode])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum UserType {
+  admin
+  user
+  supplier
+}
+
+enum ShipmentStatus {
+  CREATED
+  SHIPPED
 }
 

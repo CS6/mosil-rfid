@@ -15,10 +15,8 @@ import prismaPlugin from './plugins/prisma.plugin';
 import helmetConfig from './config/helmet.config';
 import { swaggerConfig } from './config/swagger.config';
 
-import productsRoutes from './routes/products.routes';
-import categoriesRoutes from './routes/categories.routes';
+import apiRoutes from './routes/categories.routes'; // This now contains our RFID system routes
 import { messageSchema, paramIdSchema, paginationSchema } from './schema/common.schema';
-import { categorySchema, productSchema } from './schema/models.schema';
 
 const main = async () => {
   const app = fastify({ logger: loggerConfig });
@@ -35,9 +33,6 @@ const main = async () => {
   app.addSchema(paramIdSchema);
   app.addSchema(messageSchema);
 
-  app.addSchema(categorySchema);
-  app.addSchema(productSchema);
-
   // Swagger Docs
   if (app.config.ENABLE_SWAGGER) {
     await app.register(fastifySwagger, swaggerConfig);
@@ -47,10 +42,7 @@ const main = async () => {
   }
 
   // API Endpoint routes
-  await app.register(async api => {
-    api.register(categoriesRoutes, { prefix: "/categories" });
-    api.register(productsRoutes, { prefix: "/products" });
-  }, { prefix: "/api/v1" });
+  await app.register(apiRoutes, { prefix: "/api/v1" });
 
   return app;
 };
