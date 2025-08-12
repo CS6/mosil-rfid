@@ -21,7 +21,9 @@ export interface IBoxRepository {
   findByBoxNo(boxNo: BoxNumber): Promise<Box | null>;
   findByUserCode(userCode: UserCode): Promise<Box[]>;
   findByShipmentNo(shipmentNo: ShipmentNumber): Promise<Box[]>;
+  findLatestByPrefix(prefix: string): Promise<Box | null>;
   save(box: Box): Promise<void>;
+  saveBatch(boxes: Box[]): Promise<void>;
   delete(boxNo: BoxNumber): Promise<void>;
 }
 

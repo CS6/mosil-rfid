@@ -1,4 +1,4 @@
-import { BoxNumber, UserCode } from '../value-objects';
+import { BoxNumber } from '../value-objects';
 import { Box } from '../entities';
 import { IBoxRepository } from '../interfaces/repositories';
 
@@ -6,33 +6,56 @@ export class BoxGenerationService {
   constructor(private boxRepository: IBoxRepository) {}
 
   public async generateBox(
-    userCode: UserCode,
+    code: string, // 3位編號
     createdBy: string
   ): Promise<Box> {
-    const boxNumber = await this.generateUniqueBoxNumber(userCode);
+    const boxNumber = await this.generateUniqueBoxNumber(code);
     
-    return new Box(boxNumber, userCode, createdBy);
+    return new Box(boxNumber, code, createdBy);
   }
 
-  private async generateUniqueBoxNumber(userCode: UserCode): Promise<BoxNumber> {
-    let attempts = 0;
-    const maxAttempts = 100;
+  public async generateBatchBoxes(
+    code: string, // 3位編號
+    quantity: number,
+    createdBy: string
+  ): Promise<Box[]> {
+    const boxes: Box[] = [];
+    
+    for (let i = 0; i < quantity; i++) {
+      const boxNumber = await this.generateUniqueBoxNumber(code);
+      boxes.push(new Box(boxNumber, code, createdBy));
+    }
+    
+    return boxes;
+  }
 
-    while (attempts < maxAttempts) {
-      const timestamp = Date.now().toString(36).toUpperCase();
-      const random = Math.random().toString(36).substring(2, 6).toUpperCase();
-      const boxValue = `${userCode.getValue()}${timestamp}${random}`.substring(0, 13);
-
-      const boxNumber = new BoxNumber(boxValue);
-      const existingBox = await this.boxRepository.findByBoxNo(boxNumber);
-      
-      if (!existingBox) {
-        return boxNumber;
-      }
-
-      attempts++;
+  private async generateUniqueBoxNumber(code: string): Promise<BoxNumber> {
+    // 驗證編號格式
+    if (!/^\d{3}$/.test(code)) {
+      throw new Error('Code must be exactly 3 digits');
     }
 
-    throw new Error('Failed to generate unique box number after maximum attempts');
+    // 取得當前年份
+    const currentYear = new Date().getFullYear().toString();
+    
+    // 取得最新的流水號
+    const prefix = `B${code}${currentYear}`;
+    const latestBox = await this.boxRepository.findLatestByPrefix(prefix);
+    
+    let nextSerial = 1;
+    if (latestBox) {
+      const boxNoValue = latestBox.getBoxNo().getValue();
+      const currentSerial = parseInt(boxNoValue.substring(8), 10);
+      nextSerial = currentSerial + 1;
+    }
+    
+    if (nextSerial > 99999) {
+      throw new Error('Box serial number exceeded maximum (99999)');
+    }
+    
+    // 格式：B + 編號3碼 + 年份4碼 + 流水號5碼 = 13碼
+    const boxValue = `${prefix}${nextSerial.toString().padStart(5, '0')}`;
+    
+    return new BoxNumber(boxValue);
   }
 }

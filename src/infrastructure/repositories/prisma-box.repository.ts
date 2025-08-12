@@ -48,10 +48,28 @@ export class PrismaBoxRepository implements IBoxRepository {
     return boxData.map(data => this.toDomainEntity(data));
   }
 
+  async findLatestByPrefix(prefix: string): Promise<Box | null> {
+    const boxData = await this.prisma.box.findFirst({
+      where: {
+        boxNo: {
+          startsWith: prefix
+        }
+      },
+      orderBy: {
+        boxNo: 'desc'
+      },
+      include: {
+        productRfids: true
+      }
+    });
+
+    return boxData ? this.toDomainEntity(boxData) : null;
+  }
+
   async save(box: Box): Promise<void> {
     const data = {
       boxNo: box.getBoxNo().getValue(),
-      userCode: box.getUserCode().getValue(),
+      userCode: box.getCode(),
       shipmentNo: box.getShipmentNo()?.getValue(),
       createdBy: box.getCreatedBy(),
       createdAt: box.getCreatedAt(),
@@ -65,6 +83,22 @@ export class PrismaBoxRepository implements IBoxRepository {
     });
   }
 
+  async saveBatch(boxes: Box[]): Promise<void> {
+    const data = boxes.map(box => ({
+      boxNo: box.getBoxNo().getValue(),
+      userCode: box.getCode(),
+      shipmentNo: box.getShipmentNo()?.getValue(),
+      createdBy: box.getCreatedBy(),
+      createdAt: box.getCreatedAt(),
+      updatedAt: box.getUpdatedAt()
+    }));
+
+    await this.prisma.box.createMany({
+      data,
+      skipDuplicates: true
+    });
+  }
+
   async delete(boxNo: BoxNumber): Promise<void> {
     await this.prisma.box.delete({
       where: { boxNo: boxNo.getValue() }
@@ -74,7 +108,7 @@ export class PrismaBoxRepository implements IBoxRepository {
   private toDomainEntity(boxData: any): Box {
     const box = new Box(
       new BoxNumber(boxData.boxNo),
-      new UserCode(boxData.userCode),
+      boxData.userCode, // Now it's just the 3-digit code string
       boxData.createdBy,
       boxData.shipmentNo ? new ShipmentNumber(boxData.shipmentNo) : undefined,
       boxData.createdAt,

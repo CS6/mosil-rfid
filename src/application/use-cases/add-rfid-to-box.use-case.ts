@@ -70,7 +70,7 @@ export class AddRfidToBoxUseCase {
 
     return {
       boxNo: box.getBoxNo().getValue(),
-      userCode: box.getUserCode().getValue(),
+      code: box.getCode(),
       shipmentNo: box.getShipmentNo()?.getValue(),
       productCount: box.getProductCount(),
       createdBy: box.getCreatedBy(),

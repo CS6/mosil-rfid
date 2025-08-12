@@ -1,23 +1,24 @@
 import { FastifyInstance } from 'fastify';
-import { createBox, addRfidToBox } from '../controllers/box.controller';
+import { createBox, createBatchBoxes, addRfidToBox } from '../controllers/box.controller';
 
 async function boxRoutes(fastify: FastifyInstance) {
-  // Create Box
+  // Create single Box  
   fastify.post('/box', {
     schema: {
-      summary: '建立新箱子',
-      description: '建立新的箱子用於存放 RFID 標籤商品',
+      summary: '建立單一外箱標籤',
+      description: '建立單一外箱標籤，格式：B + 編號3碼 + 年份4碼 + 流水號5碼 = 13碼',
       tags: ['Box'],
       body: {
         type: 'object',
-        required: ['userCode'],
+        required: ['code'],
         properties: {
-          userCode: { 
+          code: { 
             type: 'string', 
             minLength: 3, 
             maxLength: 3,
-            pattern: '^[A-Z0-9]+$',
-            description: 'User code (3 characters, uppercase letters and numbers)'
+            pattern: '^[0-9]+$',
+            description: '3位數字編號 (例如: "001")',
+            examples: ['001', '002', '123']
           }
         }
       },
@@ -29,8 +30,8 @@ async function boxRoutes(fastify: FastifyInstance) {
             data: {
               type: 'object',
               properties: {
-                boxNo: { type: 'string' },
-                userCode: { type: 'string' },
+                boxNo: { type: 'string', description: '箱號 (13碼)', examples: ['B001202500001'] },
+                code: { type: 'string', description: '3位編號', examples: ['001'] },
                 shipmentNo: { type: 'string', nullable: true },
                 productCount: { type: 'number' },
                 createdBy: { type: 'string' },
@@ -51,6 +52,67 @@ async function boxRoutes(fastify: FastifyInstance) {
       }
     }
   }, createBox);
+
+  // Create batch Boxes
+  fastify.post('/boxes', {
+    schema: {
+      summary: '批次產生外箱標籤',
+      description: '批次產生外箱標籤，格式：B + 編號3碼 + 年份4碼 + 流水號5碼 = 13碼',
+      tags: ['Box'],
+      body: {
+        type: 'object',
+        required: ['code', 'quantity'],
+        properties: {
+          code: { 
+            type: 'string', 
+            minLength: 3, 
+            maxLength: 3,
+            pattern: '^[0-9]+$',
+            description: '3位數字編號 (例如: "001")',
+            examples: ['001', '002', '123']
+          },
+          quantity: {
+            type: 'integer',
+            minimum: 1,
+            maximum: 100,
+            description: '產生數量 (1-100)',
+            examples: [10, 50]
+          }
+        }
+      },
+      response: {
+        201: {
+          type: 'object',
+          properties: {
+            message: { type: 'string' },
+            data: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  boxNo: { type: 'string', description: '箱號 (13碼)', examples: ['B001202500001'] },
+                  code: { type: 'string', description: '3位編號', examples: ['001'] },
+                  shipmentNo: { type: 'string', nullable: true },
+                  productCount: { type: 'number' },
+                  createdBy: { type: 'string' },
+                  createdAt: { type: 'string', format: 'date-time' },
+                  updatedAt: { type: 'string', format: 'date-time' }
+                }
+              }
+            }
+          }
+        },
+        400: {
+          type: 'object',
+          properties: {
+            message: { type: 'string' },
+            errorCode: { type: 'string' },
+            details: { type: 'object', nullable: true }
+          }
+        }
+      }
+    }
+  }, createBatchBoxes);
 
   // Add RFID to Box
   fastify.post('/box/add-rfid', {
@@ -85,8 +147,8 @@ async function boxRoutes(fastify: FastifyInstance) {
             data: {
               type: 'object',
               properties: {
-                boxNo: { type: 'string' },
-                userCode: { type: 'string' },
+                boxNo: { type: 'string', description: '箱號 (13碼)', examples: ['B001202500001'] },
+                code: { type: 'string', description: '3位編號', examples: ['001'] },
                 shipmentNo: { type: 'string', nullable: true },
                 productCount: { type: 'number' },
                 createdBy: { type: 'string' },

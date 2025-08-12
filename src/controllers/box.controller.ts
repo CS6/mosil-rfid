@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { CreateBoxUseCase, AddRfidToBoxUseCase } from '../application';
+import { CreateBoxUseCase, CreateBatchBoxesUseCase, AddRfidToBoxUseCase } from '../application';
 import { 
   PrismaBoxRepository, 
   PrismaUserRepository,
@@ -10,7 +10,12 @@ import { BoxGenerationService, AuditService } from '../domain';
 import { ApiSuccessResponse } from '../types/api-response';
 
 interface CreateBoxBody {
-  userCode: string;
+  code: string; // 3位編號
+}
+
+interface CreateBatchBoxBody {
+  code: string; // 3位編號
+  quantity: number; // 數量
 }
 
 interface AddRfidToBoxBody {
@@ -97,6 +102,48 @@ export async function addRfidToBox(
     };
     
     reply.status(200).send(response);
+  } catch (error) {
+    throw error; // Let global error handler handle it
+  }
+}
+
+export async function createBatchBoxes(
+  request: FastifyRequest<{ Body: CreateBatchBoxBody }>,
+  reply: FastifyReply
+): Promise<void> {
+  try {
+    // Initialize repositories
+    const boxRepository = new PrismaBoxRepository(request.server.prisma);
+    const userRepository = new PrismaUserRepository(request.server.prisma);
+    const systemLogRepository = new PrismaSystemLogRepository(request.server.prisma);
+
+    // Initialize services
+    const boxGenerationService = new BoxGenerationService(boxRepository);
+    const auditService = new AuditService(systemLogRepository);
+
+    // Initialize use case
+    const createBatchBoxesUseCase = new CreateBatchBoxesUseCase(
+      boxRepository,
+      userRepository,
+      boxGenerationService,
+      auditService
+    );
+
+    const userUuid = 'dummy-user-uuid';
+    const ipAddress = request.ip;
+
+    const result = await createBatchBoxesUseCase.execute(
+      request.body,
+      userUuid,
+      ipAddress
+    );
+
+    const response: ApiSuccessResponse = {
+      message: "success",
+      data: result
+    };
+    
+    reply.status(201).send(response);
   } catch (error) {
     throw error; // Let global error handler handle it
   }

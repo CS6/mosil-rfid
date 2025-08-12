@@ -55,6 +55,21 @@ export class AuditService {
     );
   }
 
+  public async logBatchBoxCreation(
+    userUuid: string,
+    boxNos: string[],
+    ipAddress?: string
+  ): Promise<void> {
+    await this.logAction(
+      userUuid,
+      'CREATE_BATCH_BOXES',
+      'Box',
+      undefined,
+      `Created ${boxNos.length} boxes: ${boxNos.join(', ')}`,
+      ipAddress
+    );
+  }
+
   public async logShipmentCreation(
     userUuid: string,
     shipmentNo: string,

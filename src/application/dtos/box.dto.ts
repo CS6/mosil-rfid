@@ -1,5 +1,10 @@
 export interface CreateBoxRequest {
-  userCode: string;
+  code: string; // 3位編號
+}
+
+export interface CreateBatchBoxRequest {
+  code: string; // 3位編號
+  quantity: number; // 數量
 }
 
 export interface AddRfidToBoxRequest {
@@ -9,7 +14,7 @@ export interface AddRfidToBoxRequest {
 
 export interface BoxResponse {
   boxNo: string;
-  userCode: string;
+  code: string; // 3位編號
   shipmentNo?: string;
   productCount: number;
   createdBy: string;

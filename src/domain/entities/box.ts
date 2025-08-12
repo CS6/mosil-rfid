@@ -1,4 +1,4 @@
-import { BoxNumber, UserCode, ShipmentNumber } from '../value-objects';
+import { BoxNumber, ShipmentNumber } from '../value-objects';
 import { ProductRfid } from './product-rfid';
 
 export class Box {
@@ -6,7 +6,7 @@ export class Box {
 
   constructor(
     private readonly boxNo: BoxNumber,
-    private readonly userCode: UserCode,
+    private readonly code: string, // 3位編號
     private readonly createdBy: string,
     private shipmentNo?: ShipmentNumber,
     private readonly createdAt: Date = new Date(),
@@ -17,8 +17,8 @@ export class Box {
     return this.boxNo;
   }
 
-  public getUserCode(): UserCode {
-    return this.userCode;
+  public getCode(): string {
+    return this.code;
   }
 
   public getShipmentNo(): ShipmentNumber | undefined {

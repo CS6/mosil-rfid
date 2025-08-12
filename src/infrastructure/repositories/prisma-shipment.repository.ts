@@ -83,7 +83,7 @@ export class PrismaShipmentRepository implements IShipmentRepository {
       shipmentData.boxes.forEach((boxData: any) => {
         const box = new Box(
           new BoxNumber(boxData.boxNo),
-          new UserCode(boxData.userCode),
+          boxData.userCode, // Now it's just the 3-digit code string
           boxData.createdBy,
           boxData.shipmentNo ? new ShipmentNumber(boxData.shipmentNo) : undefined,
           boxData.createdAt,

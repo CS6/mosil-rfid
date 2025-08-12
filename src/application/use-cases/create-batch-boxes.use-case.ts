@@ -4,9 +4,9 @@ import {
   BoxGenerationService,
   AuditService
 } from '../../domain';
-import { CreateBoxRequest, BoxResponse } from '../dtos';
+import { CreateBatchBoxRequest, BoxResponse } from '../dtos';
 
-export class CreateBoxUseCase {
+export class CreateBatchBoxesUseCase {
   constructor(
     private boxRepository: IBoxRepository,
     private userRepository: IUserRepository,
@@ -15,10 +15,10 @@ export class CreateBoxUseCase {
   ) {}
 
   public async execute(
-    request: CreateBoxRequest,
+    request: CreateBatchBoxRequest,
     userUuid: string,
     ipAddress?: string
-  ): Promise<BoxResponse> {
+  ): Promise<BoxResponse[]> {
     const user = await this.userRepository.findByUuid(userUuid);
     if (!user) {
       throw new Error('User not found');
@@ -28,17 +28,26 @@ export class CreateBoxUseCase {
       throw new Error('User is not active');
     }
 
-    const box = await this.boxGenerationService.generateBox(request.code, userUuid);
-    
-    await this.boxRepository.save(box);
+    if (request.quantity <= 0 || request.quantity > 100) {
+      throw new Error('Quantity must be between 1 and 100');
+    }
 
-    await this.auditService.logBoxCreation(
+    const boxes = await this.boxGenerationService.generateBatchBoxes(
+      request.code, 
+      request.quantity, 
+      userUuid
+    );
+    
+    await this.boxRepository.saveBatch(boxes);
+
+    // Log batch creation
+    await this.auditService.logBatchBoxCreation(
       userUuid,
-      box.getBoxNo().getValue(),
+      boxes.map(box => box.getBoxNo().getValue()),
       ipAddress
     );
 
-    return {
+    return boxes.map(box => ({
       boxNo: box.getBoxNo().getValue(),
       code: box.getCode(),
       shipmentNo: box.getShipmentNo()?.getValue(),
@@ -46,6 +55,6 @@ export class CreateBoxUseCase {
       createdBy: box.getCreatedBy(),
       createdAt: box.getCreatedAt(),
       updatedAt: box.getUpdatedAt()
-    };
+    }));
   }
 }
