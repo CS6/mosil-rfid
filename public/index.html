@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RFID 系統 API 文檔</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .description {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .api-links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .api-link {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        .api-link:hover {
+            background: #45a049;
+        }
+        .docs-link {
+            background: #2196F3;
+        }
+        .docs-link:hover {
+            background: #0b7dda;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+        }
+        .endpoints {
+            text-align: left;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏷️ RFID 系統 API</h1>
+        <div class="description">
+            RFID 商品標籤管理系統 - 使用 Fastify, Prisma 和 DDD 架構
+        </div>
+        
+        <div class="api-links">
+            <a href="/docs" class="api-link docs-link">📚 Swagger API 文檔</a>
+            <a href="/api/v1/rfid" class="api-link">🏷️ RFID 管理</a>
+            <a href="/api/v1/boxes" class="api-link">📦 箱子管理</a>
+            <a href="/api/v1/shipment" class="api-link">🚚 出貨管理</a>
+        </div>
+
+        <div class="status">
+            <strong>✅ 系統狀態:</strong> 運行中
+            <div class="endpoints">
+                <strong>主要端點:</strong><br>
+                • 認證: POST /api/v1/auth/login<br>
+                • RFID: GET|POST /api/v1/rfid<br>
+                • 箱子: GET|POST /api/v1/box<br>
+                • 出貨: POST /api/v1/shipment<br>
+                • 日誌: GET /api/v1/logs
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 檢查 Swagger 是否可用
+        fetch('/docs/json')
+            .then(response => {
+                if (response.ok) {
+                    console.log('Swagger API 文檔可用');
+                } else {
+                    document.querySelector('.docs-link').innerHTML = '📚 API 文檔 (檢查中...)';
+                }
+            })
+            .catch(() => {
+                document.querySelector('.docs-link').innerHTML = '📚 API 文檔 (載入中...)';
+            });
+    </script>
+</body>
+</html>
