@@ -104,14 +104,14 @@ function getErrorCode(message: string): string {
 }
 
 function getHttpStatusCode(errorCode: string): number {
-  // 根據 HTTP 狀態碼規範對應
+  // 根據你的 HTTP 狀態碼規範對應（只處理錯誤狀態碼）
   const statusMap: Record<string, number> = {
-    'invalid_request': 400,    // 請求錯誤
-    'unauthorized': 401,       // 未認證
-    'forbidden': 403,          // 無權限
-    'not_found': 404,          // 找不到資源
-    'conflict': 409,           // 衝突
-    'internal_error': 500      // 伺服器錯誤
+    'invalid_request': 400,    // 400 - 請求錯誤：參數驗證失敗
+    'unauthorized': 401,       // 401 - 未認證：Token 無效或過期  
+    'forbidden': 403,          // 403 - 無權限：權限不足
+    'not_found': 404,          // 404 - 找不到資源：資源不存在
+    'conflict': 409,           // 409 - 衝突：業務邏輯衝突
+    'internal_error': 500      // 500 - 伺服器錯誤：系統內部錯誤
   };
 
   return statusMap[errorCode] || 400; // 預設為 400

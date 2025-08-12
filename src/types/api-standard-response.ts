@@ -49,14 +49,30 @@ export const ErrorCodes = {
   INTERNAL_ERROR: 'internal_error'
 } as const;
 
-// HTTP 狀態碼對應表
+// HTTP 狀態碼完整定義（依照你的規範）
+export const HttpStatusCodes = {
+  // 成功狀態碼
+  OK: 200,                    // 成功：GET、PUT、PATCH 成功
+  CREATED: 201,               // 建立成功：POST 新增資源成功
+  NO_CONTENT: 204,            // 無內容：DELETE 成功或無需回傳資料
+  
+  // 錯誤狀態碼
+  BAD_REQUEST: 400,           // 請求錯誤：參數驗證失敗
+  UNAUTHORIZED: 401,          // 未認證：Token 無效或過期
+  FORBIDDEN: 403,             // 無權限：權限不足
+  NOT_FOUND: 404,             // 找不到資源：資源不存在
+  CONFLICT: 409,              // 衝突：業務邏輯衝突
+  INTERNAL_SERVER_ERROR: 500  // 伺服器錯誤：系統內部錯誤
+} as const;
+
+// 錯誤碼對應 HTTP 狀態碼表
 export const ErrorCodeHttpStatus: Record<string, number> = {
-  [ErrorCodes.INVALID_REQUEST]: 400,   // 請求錯誤
-  [ErrorCodes.UNAUTHORIZED]: 401,      // 未認證
-  [ErrorCodes.FORBIDDEN]: 403,         // 無權限
-  [ErrorCodes.NOT_FOUND]: 404,         // 找不到資源
-  [ErrorCodes.CONFLICT]: 409,          // 衝突
-  [ErrorCodes.INTERNAL_ERROR]: 500     // 伺服器錯誤
+  [ErrorCodes.INVALID_REQUEST]: HttpStatusCodes.BAD_REQUEST,     // 400
+  [ErrorCodes.UNAUTHORIZED]: HttpStatusCodes.UNAUTHORIZED,       // 401
+  [ErrorCodes.FORBIDDEN]: HttpStatusCodes.FORBIDDEN,             // 403
+  [ErrorCodes.NOT_FOUND]: HttpStatusCodes.NOT_FOUND,             // 404
+  [ErrorCodes.CONFLICT]: HttpStatusCodes.CONFLICT,               // 409
+  [ErrorCodes.INTERNAL_ERROR]: HttpStatusCodes.INTERNAL_SERVER_ERROR // 500
 };
 
 // 輔助函數：創建成功回應

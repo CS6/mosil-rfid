@@ -36,9 +36,21 @@ export const errorResponseSchema = {
   $id: 'errorResponseSchema',
   type: 'object',
   properties: {
-    message: { type: 'string' },
-    errorCode: { type: 'string' },
-    details: { type: 'object', nullable: true }
+    message: { 
+      type: 'string',
+      description: '錯誤描述',
+      examples: ['參數驗證失敗', 'RFID 已存在', '使用者不存在', '權限不足']
+    },
+    errorCode: { 
+      type: 'string',
+      enum: ['invalid_request', 'unauthorized', 'forbidden', 'not_found', 'conflict', 'internal_error'],
+      description: '標準錯誤碼'
+    },
+    details: { 
+      type: 'object', 
+      nullable: true,
+      description: '錯誤詳細資訊（可選）'
+    }
   },
   required: ['message', 'errorCode']
 };
@@ -82,9 +94,21 @@ export const unauthorizedResponseSchema = {
   $id: 'unauthorizedResponseSchema',
   type: 'object',
   properties: {
-    message: { type: 'string', examples: ['Unauthorized', 'Token expired', 'Invalid token'] },
-    errorCode: { type: 'string', examples: ['UNAUTHORIZED', 'TOKEN_EXPIRED', 'INVALID_TOKEN'] },
-    details: { type: 'object', nullable: true }
+    message: { 
+      type: 'string', 
+      description: '未認證錯誤描述',
+      examples: ['Token 無效或過期', '請提供有效的認證憑證', '登入已過期']
+    },
+    errorCode: { 
+      type: 'string', 
+      enum: ['unauthorized'],
+      description: '未認證錯誤碼'
+    },
+    details: { 
+      type: 'object', 
+      nullable: true,
+      description: '錯誤詳細資訊（可選）'
+    }
   },
   required: ['message', 'errorCode']
 };
@@ -93,9 +117,21 @@ export const forbiddenResponseSchema = {
   $id: 'forbiddenResponseSchema',
   type: 'object',
   properties: {
-    message: { type: 'string', examples: ['Forbidden', 'Insufficient permissions', 'Access denied'] },
-    errorCode: { type: 'string', examples: ['FORBIDDEN', 'INSUFFICIENT_PERMISSIONS', 'ACCESS_DENIED'] },
-    details: { type: 'object', nullable: true }
+    message: { 
+      type: 'string', 
+      description: '權限不足錯誤描述',
+      examples: ['權限不足', '使用者未啟用', '存取被拒絕']
+    },
+    errorCode: { 
+      type: 'string', 
+      enum: ['forbidden'],
+      description: '權限錯誤碼'
+    },
+    details: { 
+      type: 'object', 
+      nullable: true,
+      description: '錯誤詳細資訊（可選）'
+    }
   },
   required: ['message', 'errorCode']
 };
