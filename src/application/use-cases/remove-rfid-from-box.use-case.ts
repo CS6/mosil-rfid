@@ -81,6 +81,7 @@ export class RemoveRfidFromBoxUseCase {
       code: box.getCode(),
       shipmentNo: box.getShipmentNo()?.getValue(),
       productCount: box.getProductCount(),
+      status: box.getShipmentNo() ? 'PACKED' : 'CREATED',
       createdBy: box.getCreatedBy(),
       createdAt: box.getCreatedAt(),
       updatedAt: box.getUpdatedAt(),

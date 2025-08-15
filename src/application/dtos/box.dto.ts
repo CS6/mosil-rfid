@@ -35,10 +35,21 @@ export interface BoxResponse {
 }
 
 export interface BoxDetailResponse extends BoxResponse {
+  status: string;
   productRfids: {
     rfid: string;
     sku: string;
     productNo: string;
     serialNo: string;
   }[];
+}
+
+export interface BoxListResponse {
+  boxes: (BoxResponse & { status: string })[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 }

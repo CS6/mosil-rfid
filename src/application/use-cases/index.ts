@@ -6,6 +6,8 @@ export * from './create-box.use-case';
 export * from './create-batch-boxes.use-case';
 export * from './add-rfid-to-box.use-case';
 export * from './remove-rfid-from-box.use-case';
+export * from './get-boxes.use-case';
+export * from './get-box-by-no.use-case';
 export * from './create-shipment.use-case';
 export * from './add-box-to-shipment.use-case';
 export * from './ship-shipment.use-case';

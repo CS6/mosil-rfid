@@ -66,6 +66,47 @@ export class PrismaBoxRepository implements IBoxRepository {
     return boxData ? this.toDomainEntity(boxData) : null;
   }
 
+  async findAll(options: {
+    page: number;
+    limit: number;
+    shipmentNo?: string;
+    status?: string;
+  }): Promise<{ boxes: Box[]; total: number }> {
+    const { page, limit, shipmentNo } = options;
+    const skip = (page - 1) * limit;
+
+    const where: any = {};
+    if (shipmentNo) {
+      where.shipmentNo = shipmentNo;
+    }
+    // Note: Box doesn't have status in schema, this is for future enhancement
+
+    const [boxData, total] = await Promise.all([
+      this.prisma.box.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: {
+          createdAt: 'desc'
+        },
+        include: {
+          productRfids: true
+        }
+      }),
+      this.prisma.box.count({ where })
+    ]);
+
+    const boxes = boxData.map(data => this.toDomainEntity(data));
+    return { boxes, total };
+  }
+
+  async exists(boxNo: BoxNumber): Promise<boolean> {
+    const count = await this.prisma.box.count({
+      where: { boxNo: boxNo.getValue() }
+    });
+    return count > 0;
+  }
+
   async save(box: Box): Promise<void> {
     const data = {
       boxNo: box.getBoxNo().getValue(),

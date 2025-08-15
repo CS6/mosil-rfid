@@ -81,7 +81,14 @@ export class BoxGenerationService {
     
     // 格式：B + 編號3碼 + 年份4碼 + 流水號5碼 = 13碼
     const boxValue = `${prefix}${nextSerial.toString().padStart(5, '0')}`;
+    const boxNumber = new BoxNumber(boxValue);
     
-    return new BoxNumber(boxValue);
+    // 檢查箱號是否已存在（防止並發問題）
+    const exists = await this.boxRepository.exists(boxNumber);
+    if (exists) {
+      throw new Error(`Box number ${boxValue} already exists`);
+    }
+    
+    return boxNumber;
   }
 }

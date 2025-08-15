@@ -1,5 +1,12 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { CreateBoxUseCase, CreateBatchBoxesUseCase, AddRfidToBoxUseCase, RemoveRfidFromBoxUseCase } from '../application';
+import { 
+  CreateBoxUseCase, 
+  CreateBatchBoxesUseCase, 
+  AddRfidToBoxUseCase, 
+  RemoveRfidFromBoxUseCase,
+  GetBoxesUseCase,
+  GetBoxByNoUseCase
+} from '../application';
 import { 
   PrismaBoxRepository, 
   PrismaUserRepository,
@@ -212,20 +219,24 @@ export async function getBoxes(
   reply: FastifyReply
 ): Promise<void> {
   try {
-    // @ts-ignore: shipmentNo and status will be used when repository methods are implemented
     const { page = 1, limit = 50, shipmentNo, status } = request.query;
+    
+    // Initialize repository
+    const boxRepository = new PrismaBoxRepository(request.server.prisma);
+    
+    // Initialize use case
+    const getBoxesUseCase = new GetBoxesUseCase(boxRepository);
+    
+    const result = await getBoxesUseCase.execute({
+      page,
+      limit,
+      shipmentNo,
+      status
+    });
     
     const response: ApiSuccessResponse = {
       message: "success",
-      data: {
-        boxes: [],
-        pagination: {
-          total: 0,
-          page,
-          limit,
-          totalPages: 0
-        }
-      }
+      data: result
     };
     
     reply.status(200).send(response);
@@ -241,19 +252,17 @@ export async function getBoxByNo(
   try {
     const { boxNo } = request.params;
     
+    // Initialize repository
+    const boxRepository = new PrismaBoxRepository(request.server.prisma);
+    
+    // Initialize use case
+    const getBoxByNoUseCase = new GetBoxByNoUseCase(boxRepository);
+    
+    const result = await getBoxByNoUseCase.execute(boxNo);
+    
     const response: ApiSuccessResponse = {
       message: "success",
-      data: {
-        boxNo,
-        code: boxNo.substring(1, 4),
-        shipmentNo: null,
-        productCount: 0,
-        status: 'CREATED',
-        productRfids: [],
-        createdBy: 'system',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
+      data: result
     };
     
     reply.status(200).send(response);
