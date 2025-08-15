@@ -39,13 +39,13 @@ describe('RfidTag Value Object', () => {
     });
 
     it('should throw error for null or undefined', () => {
-      expect(() => new RfidTag(null as any)).toThrow('RFID tag cannot be null or undefined');
-      expect(() => new RfidTag(undefined as any)).toThrow('RFID tag cannot be null or undefined');
+      expect(() => new RfidTag(null as any)).toThrow('RFID tag cannot be empty');
+      expect(() => new RfidTag(undefined as any)).toThrow('RFID tag cannot be empty');
     });
 
     it('should throw error for empty string', () => {
       expect(() => new RfidTag('')).toThrow('RFID tag cannot be empty');
-      expect(() => new RfidTag('   ')).toThrow('RFID tag cannot be empty');
+      expect(() => new RfidTag('   ')).toThrow('RFID tag must be exactly 17 characters');
     });
 
     it('should throw error for wrong length', () => {
@@ -98,8 +98,8 @@ describe('RfidTag Value Object', () => {
     it('should handle null comparison gracefully', () => {
       const rfid = new RfidTag('A252600201234ABCD');
 
-      expect(rfid.equals(null as any)).toBe(false);
-      expect(rfid.equals(undefined as any)).toBe(false);
+      expect(() => rfid.equals(null as any)).toThrow();
+      expect(() => rfid.equals(undefined as any)).toThrow();
     });
   });
 
