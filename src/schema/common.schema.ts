@@ -46,10 +46,10 @@ export const errorResponseSchema = {
       enum: ['invalid_request', 'unauthorized', 'forbidden', 'not_found', 'conflict', 'internal_error'],
       description: '標準錯誤碼'
     },
-    details: { 
+    data: { 
       type: 'object', 
       nullable: true,
-      description: '錯誤詳細資訊（可選）'
+      description: '錯誤詳細資訊（統一使用 data 欄位）'
     }
   },
   required: ['message', 'errorCode']
@@ -104,10 +104,10 @@ export const unauthorizedResponseSchema = {
       enum: ['unauthorized'],
       description: '未認證錯誤碼'
     },
-    details: { 
+    data: { 
       type: 'object', 
       nullable: true,
-      description: '錯誤詳細資訊（可選）'
+      description: '錯誤詳細資訊（統一使用 data 欄位）'
     }
   },
   required: ['message', 'errorCode']
@@ -127,10 +127,10 @@ export const forbiddenResponseSchema = {
       enum: ['forbidden'],
       description: '權限錯誤碼'
     },
-    details: { 
+    data: { 
       type: 'object', 
       nullable: true,
-      description: '錯誤詳細資訊（可選）'
+      description: '錯誤詳細資訊（統一使用 data 欄位）'
     }
   },
   required: ['message', 'errorCode']

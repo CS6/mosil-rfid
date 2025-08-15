@@ -64,7 +64,8 @@ export async function createShipment(
   } catch (error) {
     reply.status(400).send({
       message: error instanceof Error ? error.message : 'Unknown error',
-      errorCode: 'SHIPMENT_ERROR'
+      errorCode: 'SHIPMENT_ERROR',
+      data: null
     });
   }
 }
@@ -107,7 +108,8 @@ export async function addBoxToShipment(
   } catch (error) {
     reply.status(400).send({
       message: error instanceof Error ? error.message : 'Unknown error',
-      errorCode: 'SHIPMENT_ERROR'
+      errorCode: 'SHIPMENT_ERROR',
+      data: null
     });
   }
 }
@@ -148,7 +150,8 @@ export async function shipShipment(
   } catch (error) {
     reply.status(400).send({
       message: error instanceof Error ? error.message : 'Unknown error',
-      errorCode: 'SHIPMENT_ERROR'
+      errorCode: 'SHIPMENT_ERROR',
+      data: null
     });
   }
 }

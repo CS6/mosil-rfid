@@ -6,7 +6,7 @@ export interface ApiSuccessResponse<T = any> {
 export interface ApiErrorResponse {
   message: string;
   errorCode: string;
-  details?: any;
+  data?: any;  // 統一使用 data 欄位
 }
 
 export interface PaginationInfo {

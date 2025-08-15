@@ -10,7 +10,7 @@ export function setupErrorHandler(app: FastifyInstance): void {
     
     // Add custom properties for API response formatting
     (customError as any).errorCode = 'VALIDATION_ERROR';
-    (customError as any).details = {
+    (customError as any).data = {
       field: error.instancePath?.replace('/', '') || dataVar,
       constraint: error.keyword
     };
@@ -27,7 +27,7 @@ export function setupErrorHandler(app: FastifyInstance): void {
       const errorResponse: ApiErrorResponse = {
         message: error.message || 'Request validation failed',
         errorCode: (error as any).errorCode || 'VALIDATION_ERROR',
-        details: (error as any).details || error.validation
+        data: (error as any).data || error.validation
       };
       
       reply.status(400).send(errorResponse);
@@ -52,7 +52,7 @@ export function setupErrorHandler(app: FastifyInstance): void {
     const errorResponse: ApiErrorResponse = {
       message: 'Internal server error',
       errorCode: 'INTERNAL_SERVER_ERROR',
-      details: process.env.NODE_ENV === 'development' ? {
+      data: process.env.NODE_ENV === 'development' ? {
         message: error.message,
         stack: error.stack
       } : undefined

@@ -9,7 +9,7 @@ export interface StandardSuccessResponse<T = any> {
 export interface StandardErrorResponse {
   message: string;
   errorCode: string;
-  details?: any;
+  data?: any;  // 統一使用 data 欄位
 }
 
 // 分頁回應格式（根據客戶需求）
@@ -110,11 +110,11 @@ export function createPaginatedResponse<T>(
 export function createErrorResponse(
   errorCode: string,
   message?: string,
-  details?: any
+  data?: any
 ): StandardErrorResponse {
   return {
     message: message || errorCode,
     errorCode,
-    details
+    data  // 統一使用 data 欄位
   };
 }
