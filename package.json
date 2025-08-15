@@ -12,7 +12,20 @@
     "test": "NODE_ENV=test jest",
     "test:watch": "NODE_ENV=test jest --watch",
     "test:coverage": "NODE_ENV=test jest --coverage",
-    "test:ci": "NODE_ENV=test jest --ci --coverage --maxWorkers=2"
+    "test:ci": "NODE_ENV=test jest --ci --coverage --maxWorkers=2",
+    "test:unit": "NODE_ENV=test jest test/unit/",
+    "test:integration": "NODE_ENV=test jest test/integration/",
+    "test:e2e": "NODE_ENV=test jest test/e2e/",
+    "test:domain": "NODE_ENV=test jest test/unit/domain/",
+    "test:shipping": "NODE_ENV=test jest test/integration/domain-shipping-workflow.test.ts",
+    "ci": "npm run build && npm run test:ci",
+    "ci:quick": "npm run test:ci",
+    "lint": "echo 'Linting not configured yet'",
+    "lint:fix": "echo 'Lint fix not configured yet'",
+    "typecheck": "tsc --noEmit",
+    "validate": "npm run typecheck && npm run test:ci",
+    "precommit": "npm run typecheck && npm run test:unit",
+    "prepush": "npm run ci"
   },
   "repository": {
     "type": "git",
